@@ -3,7 +3,7 @@ package db.migration.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ForeignKey {
+public class ForeignKey extends DBObject {
     private String name;
     private String foreignReference;
     private String primaryReference;

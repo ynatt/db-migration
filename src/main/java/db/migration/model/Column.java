@@ -1,6 +1,6 @@
 package db.migration.model;
 
-public class Column {
+public class Column extends DBObject{
     private String name;
     private DBType defaultValue;
     private boolean isPrimaryKey;

@@ -3,7 +3,7 @@ package db.migration.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Index {
+public class Index extends DBObject {
     private String name;
     private String schemaName;
     private String tableName;

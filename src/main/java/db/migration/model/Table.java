@@ -3,7 +3,7 @@ package db.migration.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Table {
+public class Table extends DBObject {
     private String name;
     private String schemaName;
     private List<Column> columns = new ArrayList<>();
