@@ -1,4 +1,4 @@
-package db.migration.service;
+package db.migration.service.modyfication;
 
 import db.migration.model.DBObject;
 

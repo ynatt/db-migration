@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Table extends DBObject {
-    private String name;
     private String schemaName;
+    private String tableName;
     private List<Column> columns = new ArrayList<>();
     private List<ForeignKey> foreignKeys = new ArrayList<>();
     private List<Index> indexes = new ArrayList<>();
@@ -14,11 +14,11 @@ public class Table extends DBObject {
     }
 
     public String getName() {
-        return name;
+        return tableName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String tableName) {
+        this.tableName = tableName;
     }
 
     public String getSchemaName() {
