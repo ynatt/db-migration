@@ -5,7 +5,7 @@ import db.migration.service.modyfication.DBChange;
 
 import java.util.List;
 
-public abstract class CreateTable implements DBChange {
+public class CreateTable implements DBChange {
     private String schemaName;
     private String tableName;
     private List<Column> columns;
@@ -32,5 +32,15 @@ public abstract class CreateTable implements DBChange {
 
     public void setColumns(List<Column> columns) {
         this.columns = columns;
+    }
+
+    @Override
+    public void execute() {
+
+    }
+
+    @Override
+    public String getQuery() {
+        return null;
     }
 }
