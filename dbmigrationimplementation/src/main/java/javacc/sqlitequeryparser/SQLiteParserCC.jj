@@ -1,0 +1,201 @@
+options {
+  STATIC = false;
+  IGNORE_CASE=true;
+}
+
+PARSER_BEGIN(CCSQLiteQueryParser)
+
+package javacc.sqlitequeryparser;
+
+import db.migration.model.*;
+import db.migration.model.modification.*;
+import db.migration.model.modification.create.*;
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class CCSQLiteQueryParser{
+
+    public DBChange analiseQuery() throws ParseException, TokenMgrError{
+        return analise();
+    }
+}
+
+PARSER_END(CCSQLiteQueryParser)
+
+SKIP:
+{
+    "\n" | "\r" | "\r\n" | "\\" | "\t" | " "
+}
+
+TOKEN [IGNORE_CASE]:
+{
+    <T_CREATE_TABLE : "CREATE TABLE">
+   |<T_OPEN_BRACKET :("(")+>
+   |<T_CLOSE_BRACKET :(")")+>
+   |<T_COMMA :(",")>
+   |<T_PRIMARY_KEY :"PRIMARY KEY">
+   |<T_AUTOINCREMENT :"AUTOINCREMENT">
+   |<T_NOT :"NOT">
+   |<T_NULL :"NULL">
+   |<T_IF :"IF">
+   |<T_EXISTS :"EXISTS">
+   |<T_UNIQUE :"UNIQUE">
+   |<T_DEFAULT :"DEFAULT">
+   |<T_APOSTR :"'">
+}
+
+TOKEN [IGNORE_CASE]:
+{
+	<T_IDENTIFIER: <LETTER>(<LETTER>|<NUMBER>)*>
+   |<#LETTER:["A"-"Z","_","a"-"z"]>
+   |<#NUMBER:["0"-"9"]>
+}
+
+DBChange analise():
+{
+	DBChange dbChange = null;
+}
+{
+		(
+			dbChange=createTable()
+		)
+		
+		{
+			return dbChange;
+		}
+}
+
+CreateTable createTable():
+{
+    CreateTable createTable = new CreateTable();
+    Table table = null;
+    List<ColumnDefinition> columnDefinitions = new ArrayList<ColumnDefinition>();
+    String columnName = null;
+    String columnDataType = null;
+    ColumnDefinition columnDef = null;
+    List<String> columnSpecs = new ArrayList<String>();
+}
+{
+    <T_CREATE_TABLE>
+	[ <T_IF> <T_NOT> <T_EXISTS> { createTable.setIfNotExists(true);} ] 
+	table = Table()
+	<T_OPEN_BRACKET>
+	columnDefinitions = ColumnDefinitions()
+	<T_CLOSE_BRACKET>
+	<EOF>
+	{
+		createTable.setTable(table);
+		createTable.setColumnDefinitions(columnDefinitions);
+		return createTable;
+	}
+	
+}
+
+Table Table():
+{
+    Token schemaToken = new Token();
+    Token tableToken = null;
+
+}
+{	
+	(LOOKAHEAD(3) schemaToken=<T_IDENTIFIER> "." tableToken=<T_IDENTIFIER>
+    |tableToken = <T_IDENTIFIER>)
+    {
+        Table table = new Table(schemaToken.image,tableToken.image);
+        return table;
+    }
+}
+List<ColumnDefinition> ColumnDefinitions():
+{
+    List<ColumnDefinition> columnDefinitions = new ArrayList<ColumnDefinition>();
+    ColumnDefinition columnDef = null;
+    String columnName = null;
+    String columnDataType = null;
+    String spec = null;
+    List<String> columnSpecs = new ArrayList<String>();
+    Token columnToken = null;
+    Token typeToken = null;
+}
+{
+    (columnToken = <T_IDENTIFIER> typeToken = <T_IDENTIFIER>
+    {
+        columnName = columnToken.image;
+        columnDataType = typeToken.image;
+    }
+    ( spec = ColumnSpec() {columnSpecs.add(spec);} )*
+    {
+        columnDef = new ColumnDefinition(columnName,columnDataType);
+        columnDef.setColumnSpecs(new ArrayList<String>(columnSpecs));
+		columnSpecs.clear();
+        columnDefinitions.add(columnDef);
+    }
+	)
+    (
+        <T_COMMA>
+        columnToken = <T_IDENTIFIER> typeToken = <T_IDENTIFIER>
+        {
+            columnName = columnToken.image;
+            columnDataType = typeToken.image;
+        }
+        ( spec = ColumnSpec()
+            {
+                columnSpecs.add(spec);
+            }
+		)*
+        {
+            columnDef = new ColumnDefinition(columnName,columnDataType);
+            columnDef.setColumnSpecs(new ArrayList<String>(columnSpecs));
+			columnSpecs.clear();
+            columnDefinitions.add(columnDef);
+        }
+    )*
+    {
+        return columnDefinitions;
+    }
+}
+
+String ColumnSpec():
+{
+    Token token = null;
+    Token token1 = null;
+    String spec = null;
+}
+{
+    token = <T_PRIMARY_KEY> [token1 = <T_AUTOINCREMENT> ]
+	{	
+		spec = token.image;
+		if(token1!=null){
+			spec+=" "+token1.image;
+		}
+		return spec;
+	}
+   |LOOKAHEAD(2) token = <T_NOT> token1 = <T_NULL> { return token.image + " " + token1.image; }
+   |token = <T_UNIQUE> { return token.image; }
+   |LOOKAHEAD(2) token = <T_DEFAULT> <T_APOSTR>token1 = <T_IDENTIFIER><T_APOSTR> { return token.image +" "+"'"+token1.image+"'"; }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

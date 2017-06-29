@@ -1,6 +1,6 @@
 package db.migration.service;
 
 public interface DBChangeExportImport {
-    void exportChanges();
-    void importChanges();
+    void exportChanges(String filePath);
+    void importChanges(String filePath);
 }

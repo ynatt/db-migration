@@ -10,9 +10,6 @@ public class ForeignKey extends DBObject {
     private List<String> foreignColumns = new ArrayList<>();
     private List<String> primaryColumns = new ArrayList<>();
 
-    public ForeignKey(){
-    }
-
     public String getName() {
         return name;
     }
