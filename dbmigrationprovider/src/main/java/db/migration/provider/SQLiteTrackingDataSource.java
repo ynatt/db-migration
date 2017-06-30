@@ -57,9 +57,14 @@ public class SQLiteTrackingDataSource implements TrackingDataSource {
         return databaseName;
     }
 
-
+    @Override
     public TrackingConnection getTrackingConnection(DBState state) throws SQLException {
         return new SQLiteTrackingConnection(this.getConnection(),new DBChangeTracker(state));
+    }
+
+    @Override
+    public TrackingConnection getTrackingConnection(String username,String password, DBState state) throws SQLException {
+        return new SQLiteTrackingConnection(this.getConnection(username,password),new DBChangeTracker(state));
     }
 
     @Override

@@ -1,4 +1,4 @@
-package db.migration.provider;
+package db.migration.provider.model;
 
 import db.migration.model.modification.ExecutableDBChange;
 import db.migration.model.modification.SQLQuery;
@@ -12,7 +12,7 @@ public class ExecutableCreateTable implements ExecutableDBChange,SQLQuery{
     private String sql;
     private SQLException exception;
 
-    ExecutableCreateTable(String sql){
+    public ExecutableCreateTable(String sql){
         this.sql=sql;
         exception=null;
     }

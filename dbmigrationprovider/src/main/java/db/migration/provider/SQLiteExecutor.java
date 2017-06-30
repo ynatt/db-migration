@@ -4,6 +4,7 @@ import db.migration.model.modification.DBChange;
 import db.migration.model.modification.ExecutableDBChange;
 import db.migration.model.modification.create.ColumnDefinition;
 import db.migration.model.modification.create.CreateTable;
+import db.migration.provider.model.ExecutableCreateTable;
 import db.migration.service.DBExecutor;
 
 import java.sql.Connection;

@@ -10,4 +10,5 @@ public interface TrackingDataSource extends DataSource{
     void setDatabaseName(String databaseName);
     String getDatabaseName();
     TrackingConnection getTrackingConnection(DBState state) throws SQLException;
+    TrackingConnection getTrackingConnection(String username, String password, DBState state) throws SQLException;
 }
