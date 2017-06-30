@@ -6,12 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="db-migration-implementation" />
+        <module name="dbmigrationprovider" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="db-migration" target="1.8" />
-      <module name="db-migration-implementation" target="1.8" />
+      <module name="dbmigrationprovider" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

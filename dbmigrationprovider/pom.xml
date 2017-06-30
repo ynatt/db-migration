@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>db-migration-implementation</artifactId>
+    <artifactId>db.migration.provider</artifactId>
 
     <dependencies>
         <dependency>

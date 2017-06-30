@@ -1,4 +1,4 @@
-package db.migration.impl;
+package db.migration.provider;
 
 import db.migration.model.modification.ExecutableDBChange;
 import db.migration.model.modification.create.ColumnDefinition;

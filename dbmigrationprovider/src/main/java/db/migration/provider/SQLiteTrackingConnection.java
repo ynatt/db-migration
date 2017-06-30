@@ -1,4 +1,4 @@
-package db.migration.impl;
+package db.migration.provider;
 
 import db.migration.service.DBChangeTracker;
 import db.migration.service.TrackingConnection;

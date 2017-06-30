@@ -1,6 +1,5 @@
-package db.migration.impl;
+package db.migration.provider;
 
-import db.migration.impl.SQLiteTrackingConnection;
 import db.migration.service.*;
 import org.sqlite.SQLiteDataSource;
 import db.migration.service.TrackingDataSource;

@@ -1,13 +1,11 @@
-package db.migration.impl;
+package db.migration.provider;
 
 import db.migration.service.DBState;
 import db.migration.service.TrackingConnection;
 import db.migration.service.TrackingDataSource;
 import db.migration.service.TrackingStatement;
 
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class Main {
     public static void main(String[] args) {

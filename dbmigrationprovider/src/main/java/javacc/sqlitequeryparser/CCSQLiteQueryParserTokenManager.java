@@ -4,8 +4,6 @@ package javacc.sqlitequeryparser;
 import db.migration.model.*;
 import db.migration.model.modification.*;
 import db.migration.model.modification.create.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /** Token Manager. */
 @SuppressWarnings("unused")public class CCSQLiteQueryParserTokenManager implements CCSQLiteQueryParserConstants {

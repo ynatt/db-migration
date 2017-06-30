@@ -1,9 +1,10 @@
-package db.migration.impl;
+package db.migration.provider;
 
 import java.sql.Statement;
 
 import db.migration.service.DBChangeTracker;
 import db.migration.model.modification.create.CreateTable;
+import db.migration.service.SQLParserException;
 import db.migration.service.TrackingStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -35,10 +36,11 @@ public class SQLiteTrackingStatement implements TrackingStatement {
         int result = statement.executeUpdate(sql);
 
         // TODO: create factory class (analyse sql inside factory)
-        Pattern pattern = Pattern.compile("(create table|drop table) .+", Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(sql);
-        if (matcher.matches()) {
-            tracker.trackChange(new CreateTable());
+        SQLiteQueryParserManager parserManager = new SQLiteQueryParserManager();
+        try {
+            tracker.trackChange(parserManager.parseSQLQuery(sql));
+        } catch (SQLParserException e) {
+            e.printStackTrace();
         }
         return result;
     }
