@@ -19,13 +19,10 @@ public class SQLiteTrackingStatement implements TrackingStatement {
     private DBChangeTracker tracker;
     SQLQueryParser parser;
 
-    public SQLiteTrackingStatement(){
-        parser = new SQLiteQueryParserManager();
-    }
-
-    public SQLiteTrackingStatement(Statement statement, DBChangeTracker tracker) {
+    public SQLiteTrackingStatement(Statement statement, DBChangeTracker tracker,SQLQueryParser parser) {
         this.statement = statement;
         this.tracker = tracker;
+        this.parser=parser;
     }
 
     @Override

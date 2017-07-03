@@ -4,13 +4,21 @@ public class SQLParserException extends Exception{
 
     private Exception exception;
 
+    public SQLParserException(String message){
+        super(message);
+    }
+
     public SQLParserException(Exception e){
         exception=e;
     }
 
     @Override
     public String getMessage() {
-        return exception.getMessage();
+        if(exception!=null) {
+            return exception.getMessage();
+        }else {
+            return super.getMessage();
+        }
     }
 
     @Override

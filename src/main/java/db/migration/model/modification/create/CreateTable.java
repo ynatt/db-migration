@@ -2,6 +2,7 @@ package db.migration.model.modification.create;
 
 import db.migration.model.Table;
 import db.migration.model.modification.DBChange;
+import db.migration.service.TrackingConnection;
 
 import java.util.List;
 
@@ -9,6 +10,7 @@ public class CreateTable implements DBChange {
     private Table table;
     private List<ColumnDefinition> columnDefinitions;
     private boolean ifNotExists=false;
+    private List<TableConstraint> tableConstraints;
 
     public CreateTable() {
 
@@ -40,6 +42,18 @@ public class CreateTable implements DBChange {
 
     public void setColumnDefinitions(List<ColumnDefinition> columnDefinitions) {
         this.columnDefinitions = columnDefinitions;
+    }
+
+    public List<TableConstraint> getTableConstraints() {
+        return tableConstraints;
+    }
+
+    public void setTableConstraints(List<TableConstraint> tableConstraints) {
+        this.tableConstraints = tableConstraints;
+    }
+
+    public void addTableConstraint(TableConstraint tableConstraint){
+        this.tableConstraints.add(tableConstraint);
     }
 
     @Override

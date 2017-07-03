@@ -13,7 +13,7 @@ public class Main {
         try {
             DBState state = new DBState("Test State");
             TrackingConnection connection = ds.getTrackingConnection(state);
-            TrackingStatement statement = connection.createTrackingStatement();
+            TrackingStatement statement = connection.createTrackingStatement(new SQLiteQueryParserManager());
             statement.executeUpdate("create table if not EXISTS user (id integer, name string)");
             statement.executeUpdate("drop table user");
         } catch (SQLException e) {

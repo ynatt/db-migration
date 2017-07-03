@@ -1,6 +1,7 @@
 package db.migration.provider;
 
 import db.migration.service.DBChangeTracker;
+import db.migration.service.SQLQueryParser;
 import db.migration.service.TrackingConnection;
 import db.migration.service.TrackingStatement;
 import java.sql.Array;
@@ -40,8 +41,8 @@ public class SQLiteTrackingConnection implements TrackingConnection{
     }
 
     @Override
-    public TrackingStatement createTrackingStatement() throws SQLException {
-        return new SQLiteTrackingStatement(connection.createStatement(), tracker);
+    public TrackingStatement createTrackingStatement(SQLQueryParser parser) throws SQLException {
+        return new SQLiteTrackingStatement(connection.createStatement(), tracker,parser);
     }
 
     public void setConnection(Connection connection) {
@@ -153,7 +154,7 @@ public class SQLiteTrackingConnection implements TrackingConnection{
 
     @Override
     public Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
-        return new SQLiteTrackingStatement(connection.createStatement(resultSetType, resultSetConcurrency), tracker);
+        return new SQLiteTrackingStatement(connection.createStatement(resultSetType, resultSetConcurrency), tracker,new SQLiteQueryParserManager());
     }
 
     @Override
@@ -208,7 +209,7 @@ public class SQLiteTrackingConnection implements TrackingConnection{
 
     @Override
     public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-        return new SQLiteTrackingStatement(connection.createStatement(resultSetType, resultSetConcurrency, resultSetHoldability), tracker);
+        return new SQLiteTrackingStatement(connection.createStatement(resultSetType, resultSetConcurrency, resultSetHoldability), tracker,new SQLiteQueryParserManager());
     }
 
     @Override

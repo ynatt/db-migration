@@ -40,4 +40,13 @@ public class ColumnDefinition {
     public void setColumnSpecs(List<String> columnSpecs) {
         this.columnSpecs = columnSpecs;
     }
+
+    public void addColumnSpec(String spec){
+        columnSpecs.add(spec);
+    }
+
+    @Override
+    public String toString() {
+        return columnName+" "+columnDataType+" "+columnSpecs;
+    }
 }

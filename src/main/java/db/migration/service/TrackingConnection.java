@@ -8,5 +8,5 @@ public interface TrackingConnection extends Connection {
      DBChangeTracker getTracker();
      void setConnection(Connection connection);
      Connection getConnection();
-     TrackingStatement createTrackingStatement() throws SQLException;
+     TrackingStatement createTrackingStatement(SQLQueryParser parser) throws SQLException;
 }
