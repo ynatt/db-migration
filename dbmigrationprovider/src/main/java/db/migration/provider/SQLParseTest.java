@@ -7,7 +7,12 @@ import db.migration.service.SQLParserException;
 
 public class SQLParseTest {
     public static void main(String[] args) {
-        String sql = "create table if not exists site.users ( id text primary key autoincrement , name text not null default 'anon')";
+        String sql = "create table if not exists site.users ( id text primary key autoincrement " +
+                ", name text not null default 'anon'" +
+                ", account integer not null unique" +
+                ", constraint \"loop\" foreign key (account) references accounts (id) on delete cascade on update no action " +
+                "not deferrable, primary key (id,name) on conflict rollback, unique(name))";
+        String sql1 = "create table if not exists accounts ( id integer primary key, cash integer not null)";
         SQLiteQueryParserManager parserManager = new SQLiteQueryParserManager();
         try {
             CreateTable createTable = (CreateTable) parserManager.parseSQLQuery(sql);

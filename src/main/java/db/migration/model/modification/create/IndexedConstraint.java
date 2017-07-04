@@ -34,7 +34,7 @@ public class IndexedConstraint extends TableConstraint{
         this.conflictDecision=conflictDecision;
     }
 
-    public IndexedConstraint(ConstraintType type,String name) {
+    public IndexedConstraint(String name,ConstraintType type) {
         super(name);
         if(checkType(type)) {
             this.type = type;
@@ -44,7 +44,7 @@ public class IndexedConstraint extends TableConstraint{
         indexedColumns = new ArrayList<>();
     }
 
-    public IndexedConstraint(ConstraintType type,String name,List<Column> columns) {
+    public IndexedConstraint(String name,ConstraintType type,List<Column> columns) {
         super(name);
         if(checkType(type)) {
             this.type = type;
@@ -54,7 +54,7 @@ public class IndexedConstraint extends TableConstraint{
         this.indexedColumns=columns;
     }
 
-    public IndexedConstraint(ConstraintType type,String name,List<Column> columns,ConflictDecision conflictDecision) {
+    public IndexedConstraint(String name,ConstraintType type,List<Column> columns,ConflictDecision conflictDecision) {
         super(name);
         if(checkType(type)) {
             this.type = type;
@@ -119,7 +119,6 @@ public class IndexedConstraint extends TableConstraint{
         if(this.conflictDecision!=null){
             result.append("ON CONFLICT ");
             result.append(conflictDecision.toString());
-            result.append(";");
         }
         return result.toString();
     }

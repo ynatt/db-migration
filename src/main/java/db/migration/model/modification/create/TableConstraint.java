@@ -21,4 +21,12 @@ public abstract class TableConstraint {
 
     public abstract ConstraintType getType();
 
+    @Override
+    public String toString() {
+        if(name!=null){
+            return "CONSTRAINT "+name;
+        } else {
+            return "";
+        }
+    }
 }

@@ -37,11 +37,55 @@ public interface CCSQLiteQueryParserConstants {
   /** RegularExpression Id. */
   int T_APOSTR = 19;
   /** RegularExpression Id. */
-  int T_IDENTIFIER = 20;
+  int T_CONSTRAINT = 20;
   /** RegularExpression Id. */
-  int LETTER = 21;
+  int T_ON = 21;
   /** RegularExpression Id. */
-  int NUMBER = 22;
+  int T_CONFLICT = 22;
+  /** RegularExpression Id. */
+  int T_ROLLBACK = 23;
+  /** RegularExpression Id. */
+  int T_ABORT = 24;
+  /** RegularExpression Id. */
+  int T_FAIL = 25;
+  /** RegularExpression Id. */
+  int T_IGNORE = 26;
+  /** RegularExpression Id. */
+  int T_REPLACE = 27;
+  /** RegularExpression Id. */
+  int T_FOREIGN_KEY = 28;
+  /** RegularExpression Id. */
+  int T_REFERENCES = 29;
+  /** RegularExpression Id. */
+  int T_DELETE = 30;
+  /** RegularExpression Id. */
+  int T_UPDATE = 31;
+  /** RegularExpression Id. */
+  int T_SET = 32;
+  /** RegularExpression Id. */
+  int T_CASCADE = 33;
+  /** RegularExpression Id. */
+  int T_RESTRICT = 34;
+  /** RegularExpression Id. */
+  int T_NO = 35;
+  /** RegularExpression Id. */
+  int T_ACTION = 36;
+  /** RegularExpression Id. */
+  int T_DEFERRABLE = 37;
+  /** RegularExpression Id. */
+  int T_INITIALLY = 38;
+  /** RegularExpression Id. */
+  int T_DEFERRED = 39;
+  /** RegularExpression Id. */
+  int T_IMMEDIATE = 40;
+  /** RegularExpression Id. */
+  int T_IDENTIFIER = 41;
+  /** RegularExpression Id. */
+  int LETTER = 42;
+  /** RegularExpression Id. */
+  int NUMBER = 43;
+  /** RegularExpression Id. */
+  int T_QUOTED_IDENTIFIER = 44;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -56,8 +100,8 @@ public interface CCSQLiteQueryParserConstants {
     "\"\\t\"",
     "\" \"",
     "\"CREATE TABLE\"",
-    "<T_OPEN_BRACKET>",
-    "<T_CLOSE_BRACKET>",
+    "\"(\"",
+    "\")\"",
     "\",\"",
     "\"PRIMARY KEY\"",
     "\"AUTOINCREMENT\"",
@@ -67,10 +111,32 @@ public interface CCSQLiteQueryParserConstants {
     "\"EXISTS\"",
     "\"UNIQUE\"",
     "\"DEFAULT\"",
-    "\"\\\'\"",
+    "<T_APOSTR>",
+    "\"CONSTRAINT\"",
+    "\"ON\"",
+    "\"CONFLICT\"",
+    "\"ROLLBACK\"",
+    "\"ABORT\"",
+    "\"FAIL\"",
+    "\"IGNORE\"",
+    "\"REPLACE\"",
+    "\"FOREIGN KEY\"",
+    "\"REFERENCES\"",
+    "\"DELETE\"",
+    "\"UPDATE\"",
+    "\"SET\"",
+    "\"CASCADE\"",
+    "\"RESTRICT\"",
+    "\"NO\"",
+    "\"ACTION\"",
+    "\"DEFERRABLE\"",
+    "\"INITIALLY\"",
+    "\"DEFERRED\"",
+    "\"IMMEDIATE\"",
     "<T_IDENTIFIER>",
     "<LETTER>",
     "<NUMBER>",
+    "<T_QUOTED_IDENTIFIER>",
     "\".\"",
   };
 

@@ -4,6 +4,7 @@ import db.migration.model.Table;
 import db.migration.model.modification.DBChange;
 import db.migration.service.TrackingConnection;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CreateTable implements DBChange {
@@ -53,7 +54,12 @@ public class CreateTable implements DBChange {
     }
 
     public void addTableConstraint(TableConstraint tableConstraint){
-        this.tableConstraints.add(tableConstraint);
+        if(this.tableConstraints!=null) {
+            this.tableConstraints.add(tableConstraint);
+        } else {
+            this.tableConstraints = new ArrayList<>();
+            this.tableConstraints.add(tableConstraint);
+        }
     }
 
     @Override

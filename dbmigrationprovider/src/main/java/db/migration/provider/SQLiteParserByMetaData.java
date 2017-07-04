@@ -36,14 +36,16 @@ public class SQLiteParserByMetaData implements SQLQueryParser {
         dataSource.setUrl("jdbc:sqlite:test.db");
         Connection connection = dataSource.getConnection();
         Statement statement = connection.createStatement();
-        String sql = "Create Table if not exists tbl (id integer primary key autoincrement unique not null)";
+        String sql = "Create Table if not exists tbl (id integer primary key autoincrement unique not null, unique(id) )";
         statement.execute(sql);
+        statement.execute("create index if not exists pop on tbl (id)");
         CreateTable createTable =(CreateTable) new SQLiteParserByMetaData(connection.getMetaData()).
                 parseSQLQuery(sql);
         System.out.println(createTable.isIfNotExists());
         System.out.println(createTable.getTable().getFullName());
         System.out.println(createTable.getColumnDefinitions());
         System.out.println(createTable.getTableConstraints());
+        System.out.println(new SQLiteExecutor(connection).makeExecutable(createTable).getQuery());
     }
 
     private class CreateTableParser implements SQLQueryParser{

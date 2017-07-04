@@ -1,6 +1,7 @@
 package db.migration.model.modification.create;
 
 public enum DeferrableClause {
+    NOT_DEFERRABLE("NOT DEFERRABLE"),
     INITIALLY_DEFERRED("INITIALLY DEFERRED"),
     INITIALLY_IMMEDIATE("INITIALLY IMMEDIATE");
 

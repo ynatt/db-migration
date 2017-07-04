@@ -72,18 +72,21 @@ public class ForeignKeyClause {
                     result.append(" , ");
                 }
             }
-            result.append(" ) ");
+            result.append(" )");
         }
         if(onDeleteClause!=null) {
+            result.append(" ");
             result.append(onDeleteClause.toString());
         }
         if(onUpdateClause!=null) {
+            result.append(" ");
             result.append(onUpdateClause.toString());
         }
         if(foreignKeyDeferrable!=null) {
+            result.append(" ");
             result.append(foreignKeyDeferrable.toString());
         } else{
-            result.append("NOT DEFERRABLE");
+            result.append(" NOT DEFERRABLE");
         }
         return result.toString();
     }

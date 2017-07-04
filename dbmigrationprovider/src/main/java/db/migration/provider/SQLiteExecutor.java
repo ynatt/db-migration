@@ -4,6 +4,7 @@ import db.migration.model.modification.DBChange;
 import db.migration.model.modification.ExecutableDBChange;
 import db.migration.model.modification.create.ColumnDefinition;
 import db.migration.model.modification.create.CreateTable;
+import db.migration.model.modification.create.TableConstraint;
 import db.migration.provider.model.ExecutableCreateTable;
 import db.migration.service.DBExecutor;
 
@@ -42,11 +43,22 @@ public class SQLiteExecutor implements DBExecutor {
                 if (columnDefinition.getColumnSpecs() != null) {
                     for (String spec : columnDefinition.getColumnSpecs()) {
                         sql.append(" ");
-                        sql.append(spec);
+                        sql.append(spec.toUpperCase());
                     }
                 }
                 if (iter.hasNext()) {
                     sql.append(", ");
+                }
+            }
+            if(createTable.getTableConstraints()!=null & !createTable.getTableConstraints().isEmpty()){
+                sql.append(" , ");
+                TableConstraint tableConstraint;
+                for(Iterator<TableConstraint> iterator = createTable.getTableConstraints().iterator(); iterator.hasNext();){
+                    tableConstraint=iterator.next();
+                    sql.append(tableConstraint);
+                    if(iterator.hasNext()){
+                        sql.append(" , ");
+                    }
                 }
             }
             sql.append(" ) ");
