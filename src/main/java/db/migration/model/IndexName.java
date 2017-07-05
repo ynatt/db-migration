@@ -1,29 +1,19 @@
 package db.migration.model;
 
-
-public class Table extends DBObject implements MultiName {
+public class IndexName implements MultiName{
     private String schemaName;
-    private String tableName;
+    private String indexName;
 
-    public Table() {
-
+    public IndexName() {
     }
 
-    public Table(String tableName) {
-        this.tableName = tableName;
+    public IndexName(String indexName) {
+        this.indexName = indexName;
     }
 
-    public Table(String schemaName, String tableName) {
+    public IndexName(String schemaName, String indexName) {
         this.schemaName = schemaName;
-        this.tableName = tableName;
-    }
-
-    public String getTableName() {
-        return tableName;
-    }
-
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
+        this.indexName = indexName;
     }
 
     public String getSchemaName() {
@@ -32,6 +22,14 @@ public class Table extends DBObject implements MultiName {
 
     public void setSchemaName(String schemaName) {
         this.schemaName = schemaName;
+    }
+
+    public String getIndexName() {
+        return indexName;
+    }
+
+    public void setIndexName(String indexName) {
+        this.indexName = indexName;
     }
 
     @Override
@@ -43,8 +41,8 @@ public class Table extends DBObject implements MultiName {
                 fullName+=".";
             }
         }
-        if (tableName != null){
-            fullName+=tableName;
+        if (indexName != null){
+            fullName+=indexName;
         }
         return fullName;
     }

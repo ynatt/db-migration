@@ -1,33 +1,31 @@
 package db.migration.provider.model;
 
 import db.migration.model.modification.ExecutableDBChange;
-import db.migration.model.modification.SQLQuery;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class ExecutableCreateTable implements ExecutableDBChange,SQLQuery{
-
+public class ExecutableDropIndex implements ExecutableDBChange {
     private String sql;
     private SQLException exception;
 
-    public ExecutableCreateTable(String sql){
-        this.sql=sql;
-    }
-
-    public SQLException getException() {
-            return exception;
+    public ExecutableDropIndex(String sql) {
+        this.sql = sql;
     }
 
     @Override
     public String getChangeType() {
-        return "CREATE TABLE";
+        return "DROP INDEX";
     }
 
     @Override
     public String getQuery() {
         return sql;
+    }
+
+    public SQLException getException() {
+        return exception;
     }
 
     @Override

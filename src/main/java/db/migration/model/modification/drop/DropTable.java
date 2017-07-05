@@ -3,8 +3,17 @@ package db.migration.model.modification.drop;
 import db.migration.model.Table;
 import db.migration.model.modification.DBChange;
 
-public abstract class DropTable implements DBChange {
+public class DropTable implements DBChange {
     private Table table;
+    private boolean ifExists = false;
+
+    public DropTable() {
+
+    }
+
+    public DropTable(Table table) {
+        this.table = table;
+    }
 
     public Table getTable() {
         return table;
@@ -12,5 +21,18 @@ public abstract class DropTable implements DBChange {
 
     public void setTable(Table table) {
         this.table = table;
+    }
+
+    public boolean isIfExists() {
+        return ifExists;
+    }
+
+    public void setIfExists(boolean ifExists) {
+        this.ifExists = ifExists;
+    }
+
+    @Override
+    public String getChangeType() {
+        return "DROP TABLE";
     }
 }

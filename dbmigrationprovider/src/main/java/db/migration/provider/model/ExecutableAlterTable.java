@@ -1,28 +1,26 @@
 package db.migration.provider.model;
 
 import db.migration.model.modification.ExecutableDBChange;
-import db.migration.model.modification.SQLQuery;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class ExecutableCreateTable implements ExecutableDBChange,SQLQuery{
-
+public class ExecutableAlterTable implements ExecutableDBChange {
     private String sql;
     private SQLException exception;
 
-    public ExecutableCreateTable(String sql){
-        this.sql=sql;
+    public ExecutableAlterTable(String sql) {
+        this.sql = sql;
     }
 
     public SQLException getException() {
-            return exception;
+        return exception;
     }
 
     @Override
     public String getChangeType() {
-        return "CREATE TABLE";
+        return "ALTER TABLE";
     }
 
     @Override

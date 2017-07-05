@@ -9,6 +9,10 @@ public class ForeignKeyDeferrable {
 
     @Override
     public String toString() {
-        return "DEFERRABLE "+deferrableClause;
+        if(deferrableClause!=DeferrableClause.NOT_DEFERRABLE) {
+            return "DEFERRABLE " + deferrableClause;
+        } else {
+            return deferrableClause.toString();
+        }
     }
 }

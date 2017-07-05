@@ -47,6 +47,15 @@ public class ColumnDefinition {
 
     @Override
     public String toString() {
-        return columnName+" "+columnDataType+" "+columnSpecs;
+        return columnName+" "+columnDataType+columnSpecs();
+    }
+
+    private String columnSpecs(){
+        StringBuilder result = new StringBuilder();
+        for(String spec: columnSpecs){
+            result.append(" ");
+            result.append(spec);
+        }
+        return result.toString();
     }
 }

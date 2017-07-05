@@ -1,4 +1,4 @@
-package db.migration.model.modification.rename;
+package db.migration.model.modification.alter;
 
 public abstract class RenameIndex {
     private String oldName;

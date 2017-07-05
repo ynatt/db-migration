@@ -5,6 +5,8 @@ package javacc.sqlitequeryparser;
 import db.migration.model.*;
 import db.migration.model.modification.*;
 import db.migration.model.modification.create.*;
+import db.migration.model.modification.alter.*;
+import db.migration.model.modification.drop.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +19,26 @@ public class CCSQLiteQueryParser implements CCSQLiteQueryParserConstants {
     }
 
   final public DBChange analise() throws ParseException {DBChange dbChange = null;
-    dbChange = createTable();
+    if (jj_2_1(2)) {
+      dbChange = createTable();
+    } else if (jj_2_2(2)) {
+      dbChange = drop();
+    } else {
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case T_CREATE:{
+        dbChange = createIndex();
+        break;
+        }
+      case T_ALTER:{
+        dbChange = alterTable();
+        break;
+        }
+      default:
+        jj_la1[0] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    }
 {if ("" != null) return dbChange;}
     throw new Error("Missing return statement in function");
   }
@@ -33,7 +54,7 @@ public class CCSQLiteQueryParser implements CCSQLiteQueryParserConstants {
       break;
       }
     default:
-      jj_la1[0] = jj_gen;
+      jj_la1[1] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -53,7 +74,8 @@ public class CCSQLiteQueryParser implements CCSQLiteQueryParserConstants {
         List<Column> columns = null;
         ConflictDecision conflictDecision = null;
         ForeignKeyClause foreignKeyClause = null;
-    jj_consume_token(T_CREATE_TABLE);
+    jj_consume_token(T_CREATE);
+    jj_consume_token(T_TABLE);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case T_IF:{
       jj_consume_token(T_IF);
@@ -63,7 +85,7 @@ createTable.setIfNotExists(true);
       break;
       }
     default:
-      jj_la1[1] = jj_gen;
+      jj_la1[2] = jj_gen;
       ;
     }
     table = Table();
@@ -71,7 +93,7 @@ createTable.setIfNotExists(true);
     columnDefinitions = ColumnDefinitions();
     label_1:
     while (true) {
-      if (jj_2_1(4)) {
+      if (jj_2_3(4)) {
         ;
       } else {
         break label_1;
@@ -84,12 +106,13 @@ createTable.setIfNotExists(true);
         break;
         }
       default:
-        jj_la1[2] = jj_gen;
+        jj_la1[3] = jj_gen;
         ;
       }
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-      case T_PRIMARY_KEY:{
-        jj_consume_token(T_PRIMARY_KEY);
+      case T_PRIMARY:{
+        jj_consume_token(T_PRIMARY);
+        jj_consume_token(T_KEY);
         columns = getColumns();
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case T_ON:{
@@ -97,7 +120,7 @@ createTable.setIfNotExists(true);
           break;
           }
         default:
-          jj_la1[3] = jj_gen;
+          jj_la1[4] = jj_gen;
           ;
         }
 createTable.addTableConstraint(new IndexedConstraint(constraintName,ConstraintType.PRIMARY_KEY,columns,conflictDecision));
@@ -112,27 +135,37 @@ createTable.addTableConstraint(new IndexedConstraint(constraintName,ConstraintTy
           break;
           }
         default:
-          jj_la1[4] = jj_gen;
+          jj_la1[5] = jj_gen;
           ;
         }
 createTable.addTableConstraint(new IndexedConstraint(constraintName,ConstraintType.UNIQUE,columns,conflictDecision));
         break;
         }
-      case T_FOREIGN_KEY:{
-        jj_consume_token(T_FOREIGN_KEY);
+      case T_FOREIGN:{
+        jj_consume_token(T_FOREIGN);
+        jj_consume_token(T_KEY);
         columns = getColumns();
         foreignKeyClause = getForeignKeyClause();
 createTable.addTableConstraint(new ForeignKeyConstraint(constraintName,columns,foreignKeyClause));
         break;
         }
       default:
-        jj_la1[5] = jj_gen;
+        jj_la1[6] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
 constraintName = null;
     }
     jj_consume_token(T_CLOSE_BRACKET);
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case 56:{
+      jj_consume_token(56);
+      break;
+      }
+    default:
+      jj_la1[7] = jj_gen;
+      ;
+    }
     jj_consume_token(0);
 createTable.setTable(table);
                 createTable.setColumnDefinitions(columnDefinitions);
@@ -142,9 +175,9 @@ createTable.setTable(table);
 
   final public Table Table() throws ParseException {String schemaName = null;
     String tableName = null;
-    if (jj_2_2(3)) {
+    if (jj_2_4(3)) {
       schemaName = getObjectName();
-      jj_consume_token(45);
+      jj_consume_token(57);
       tableName = getObjectName();
     } else {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -154,13 +187,38 @@ createTable.setTable(table);
         break;
         }
       default:
-        jj_la1[6] = jj_gen;
+        jj_la1[8] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
     }
 Table table = new Table(schemaName,tableName);
         {if ("" != null) return table;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public IndexName IndexName() throws ParseException {String schemaName = null;
+        String indexStringName = null;
+        IndexName indexName = null;
+    if (jj_2_5(3)) {
+      schemaName = getObjectName();
+      jj_consume_token(57);
+      indexStringName = getObjectName();
+    } else {
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case T_IDENTIFIER:
+      case T_QUOTED_IDENTIFIER:{
+        indexStringName = getObjectName();
+        break;
+        }
+      default:
+        jj_la1[9] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    }
+indexName = new IndexName(schemaName,indexStringName);
+        {if ("" != null) return indexName;}
     throw new Error("Missing return statement in function");
   }
 
@@ -175,7 +233,7 @@ Table table = new Table(schemaName,tableName);
     label_2:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-      case T_PRIMARY_KEY:
+      case T_PRIMARY:
       case T_NOT:
       case T_UNIQUE:
       case T_DEFAULT:{
@@ -183,7 +241,7 @@ Table table = new Table(schemaName,tableName);
         break;
         }
       default:
-        jj_la1[7] = jj_gen;
+        jj_la1[10] = jj_gen;
         break label_2;
       }
       spec = ColumnSpec();
@@ -195,7 +253,7 @@ columnDef = new ColumnDefinition(columnName,columnDataType);
         columnDefinitions.add(columnDef);
     label_3:
     while (true) {
-      if (jj_2_3(2)) {
+      if (jj_2_6(2)) {
         ;
       } else {
         break label_3;
@@ -206,7 +264,7 @@ columnDef = new ColumnDefinition(columnName,columnDataType);
       label_4:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-        case T_PRIMARY_KEY:
+        case T_PRIMARY:
         case T_NOT:
         case T_UNIQUE:
         case T_DEFAULT:{
@@ -214,7 +272,7 @@ columnDef = new ColumnDefinition(columnName,columnDataType);
           break;
           }
         default:
-          jj_la1[8] = jj_gen;
+          jj_la1[11] = jj_gen;
           break label_4;
         }
         spec = ColumnSpec();
@@ -229,48 +287,49 @@ columnDef = new ColumnDefinition(columnName,columnDataType);
     throw new Error("Missing return statement in function");
   }
 
-  final public String ColumnSpec() throws ParseException {Token token = null;
-    Token token1 = null;
-    String spec = null;
+  final public String ColumnSpec() throws ParseException {String spec = null;
         String defaultValue = null;
+        boolean isAutoincrement = false;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case T_PRIMARY_KEY:{
-      token = jj_consume_token(T_PRIMARY_KEY);
+    case T_PRIMARY:{
+      jj_consume_token(T_PRIMARY);
+      jj_consume_token(T_KEY);
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case T_AUTOINCREMENT:{
-        token1 = jj_consume_token(T_AUTOINCREMENT);
+        jj_consume_token(T_AUTOINCREMENT);
+isAutoincrement =true;
         break;
         }
       default:
-        jj_la1[9] = jj_gen;
+        jj_la1[12] = jj_gen;
         ;
       }
-spec = token.image;
-                if(token1!=null){
-                        spec+=" "+token1.image;
+spec = "PRIMARY KEY";
+                if(isAutoincrement){
+                        spec+=" AUTOINCREMENT";
                 }
                 {if ("" != null) return spec;}
       break;
       }
     default:
-      jj_la1[10] = jj_gen;
-      if (jj_2_4(2)) {
-        token = jj_consume_token(T_NOT);
-        token1 = jj_consume_token(T_NULL);
-{if ("" != null) return token.image + " " + token1.image;}
+      jj_la1[13] = jj_gen;
+      if (jj_2_7(2)) {
+        jj_consume_token(T_NOT);
+        jj_consume_token(T_NULL);
+{if ("" != null) return "NOT NULL";}
       } else {
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case T_UNIQUE:{
-          token = jj_consume_token(T_UNIQUE);
-{if ("" != null) return token.image;}
+          jj_consume_token(T_UNIQUE);
+{if ("" != null) return "UNIQUE";}
           break;
           }
         default:
-          jj_la1[11] = jj_gen;
-          if (jj_2_5(2)) {
-            token = jj_consume_token(T_DEFAULT);
+          jj_la1[14] = jj_gen;
+          if (jj_2_8(2)) {
+            jj_consume_token(T_DEFAULT);
             defaultValue = getObjectName();
-{if ("" != null) return token.image +" "+defaultValue;}
+{if ("" != null) return "DEFAULT "+defaultValue;}
           } else {
             jj_consume_token(-1);
             throw new ParseException();
@@ -295,7 +354,7 @@ columns = new ArrayList<Column>();
         break;
         }
       default:
-        jj_la1[12] = jj_gen;
+        jj_la1[15] = jj_gen;
         break label_5;
       }
       jj_consume_token(T_COMMA);
@@ -337,7 +396,7 @@ columns.add(new Column(columnName));
       break;
       }
     default:
-      jj_la1[13] = jj_gen;
+      jj_la1[16] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -358,15 +417,15 @@ columns.add(new Column(columnName));
       break;
       }
     default:
-      jj_la1[14] = jj_gen;
+      jj_la1[17] = jj_gen;
       ;
     }
-    if (jj_2_6(2)) {
+    if (jj_2_9(2)) {
       onDeleteClause = getOnDeleteClause();
     } else {
       ;
     }
-    if (jj_2_7(2)) {
+    if (jj_2_10(2)) {
       onUpdateClause = getOnUpdateClause();
     } else {
       ;
@@ -377,7 +436,7 @@ columns.add(new Column(columnName));
       break;
       }
     default:
-      jj_la1[15] = jj_gen;
+      jj_la1[18] = jj_gen;
       ;
     }
 foreignKeyClause = new ForeignKeyClause(foreignTable);
@@ -406,7 +465,7 @@ foreignKeyClause = new ForeignKeyClause(foreignTable);
   }
 
   final public ClauseDecision getClauseDecision() throws ParseException {
-    if (jj_2_8(2)) {
+    if (jj_2_11(2)) {
       jj_consume_token(T_SET);
       jj_consume_token(T_NULL);
 {if ("" != null) return ClauseDecision.SET_NULL;}
@@ -435,7 +494,7 @@ foreignKeyClause = new ForeignKeyClause(foreignTable);
         break;
         }
       default:
-        jj_la1[16] = jj_gen;
+        jj_la1[19] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -447,7 +506,7 @@ foreignKeyClause = new ForeignKeyClause(foreignTable);
     jj_consume_token(T_NOT);
     jj_consume_token(T_DEFERRABLE);
 {if ("" != null) return new ForeignKeyDeferrable(DeferrableClause.NOT_DEFERRABLE);}
-    if (jj_2_9(3)) {
+    if (jj_2_12(3)) {
       jj_consume_token(T_DEFERRABLE);
       jj_consume_token(T_INITIALLY);
       jj_consume_token(T_DEFERRED);
@@ -462,10 +521,255 @@ foreignKeyClause = new ForeignKeyClause(foreignTable);
         break;
         }
       default:
-        jj_la1[17] = jj_gen;
+        jj_la1[20] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
+    }
+    throw new Error("Missing return statement in function");
+  }
+
+  final public DBChange drop() throws ParseException {Table table = null;
+        IndexName indexName = null;
+    jj_consume_token(T_DROP);
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case T_TABLE:{
+      jj_consume_token(T_TABLE);
+DropTable dropTable = new DropTable();
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case T_IF:{
+        jj_consume_token(T_IF);
+        jj_consume_token(T_EXISTS);
+dropTable.setIfExists(true);
+        break;
+        }
+      default:
+        jj_la1[21] = jj_gen;
+        ;
+      }
+      table = Table();
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case 56:{
+        jj_consume_token(56);
+        break;
+        }
+      default:
+        jj_la1[22] = jj_gen;
+        ;
+      }
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case 0:{
+        jj_consume_token(0);
+        break;
+        }
+      default:
+        jj_la1[23] = jj_gen;
+        ;
+      }
+dropTable.setTable(table);
+                                {if ("" != null) return dropTable;}
+      break;
+      }
+    case T_INDEX:{
+      jj_consume_token(T_INDEX);
+DropIndex dropIndex = new DropIndex();
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case T_IF:{
+        jj_consume_token(T_IF);
+        jj_consume_token(T_EXISTS);
+dropIndex.setIfExists(true);
+        break;
+        }
+      default:
+        jj_la1[24] = jj_gen;
+        ;
+      }
+      indexName = IndexName();
+dropIndex.setIndexName(indexName);
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case 56:{
+        jj_consume_token(56);
+        break;
+        }
+      default:
+        jj_la1[25] = jj_gen;
+        ;
+      }
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case 0:{
+        jj_consume_token(0);
+        break;
+        }
+      default:
+        jj_la1[26] = jj_gen;
+        ;
+      }
+{if ("" != null) return dropIndex;}
+      break;
+      }
+    default:
+      jj_la1[27] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+    throw new Error("Missing return statement in function");
+  }
+
+  final public DBChange createIndex() throws ParseException {CreateIndex createIndex = new CreateIndex();
+        Table table = new Table();
+        Index index = new Index();
+        IndexName indexName = null;
+        List<IndexedColumn> indexedColumns = new ArrayList<IndexedColumn>();
+    jj_consume_token(T_CREATE);
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case T_UNIQUE:{
+      jj_consume_token(T_UNIQUE);
+createIndex.setUnique(true);
+      break;
+      }
+    default:
+      jj_la1[28] = jj_gen;
+      ;
+    }
+    jj_consume_token(T_INDEX);
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case T_IF:{
+      jj_consume_token(T_IF);
+      jj_consume_token(T_NOT);
+      jj_consume_token(T_EXISTS);
+createIndex.setIfNotExists(true);
+      break;
+      }
+    default:
+      jj_la1[29] = jj_gen;
+      ;
+    }
+    indexName = IndexName();
+index.setIndexName(indexName);
+    jj_consume_token(T_ON);
+    table = Table();
+createIndex.setTable(table);
+    indexedColumns = getIndexedColumns();
+index.setIndexedColumns(indexedColumns);
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case 56:{
+      jj_consume_token(56);
+      break;
+      }
+    default:
+      jj_la1[30] = jj_gen;
+      ;
+    }
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case 0:{
+      jj_consume_token(0);
+      break;
+      }
+    default:
+      jj_la1[31] = jj_gen;
+      ;
+    }
+createIndex.setIndex(index);
+                {if ("" != null) return createIndex;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public List<IndexedColumn> getIndexedColumns() throws ParseException {IndexedColumn indexedColumn = null;
+        ArrayList<IndexedColumn> indexedColumns = new ArrayList<IndexedColumn>();
+        String columnName = null;
+    jj_consume_token(T_OPEN_BRACKET);
+    label_6:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case T_COMMA:{
+        jj_consume_token(T_COMMA);
+        break;
+        }
+      default:
+        jj_la1[32] = jj_gen;
+        ;
+      }
+      columnName = getObjectName();
+indexedColumn = new IndexedColumn(new Column(columnName));
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case T_ASC:
+      case T_DESC:{
+        switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+        case T_ASC:{
+          jj_consume_token(T_ASC);
+indexedColumn.setOrder(Order.ASC);
+          break;
+          }
+        case T_DESC:{
+          jj_consume_token(T_DESC);
+indexedColumn.setOrder(Order.ASC);
+          break;
+          }
+        default:
+          jj_la1[33] = jj_gen;
+          jj_consume_token(-1);
+          throw new ParseException();
+        }
+        break;
+        }
+      default:
+        jj_la1[34] = jj_gen;
+        ;
+      }
+indexedColumns.add(indexedColumn);
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case T_COMMA:
+      case T_IDENTIFIER:
+      case T_QUOTED_IDENTIFIER:{
+        ;
+        break;
+        }
+      default:
+        jj_la1[35] = jj_gen;
+        break label_6;
+      }
+    }
+    jj_consume_token(T_CLOSE_BRACKET);
+{if ("" != null) return indexedColumns;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public DBChange alterTable() throws ParseException {Table table = null;
+        AbstractAlterType alterType = null;
+        Table newTable = null;
+        ColumnDefinition columnDefinition = null;
+        List<ColumnDefinition> column = null;
+    jj_consume_token(T_ALTER);
+    jj_consume_token(T_TABLE);
+    table = Table();
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case T_RENAME:{
+      jj_consume_token(T_RENAME);
+      jj_consume_token(T_TO);
+      newTable = Table();
+{if ("" != null) return new AlterTable(table,new RenameTo(AlterTableType.RENAME,newTable));}
+      break;
+      }
+    case T_ADD:{
+      jj_consume_token(T_ADD);
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case T_COLUMN:{
+        jj_consume_token(T_COLUMN);
+        break;
+        }
+      default:
+        jj_la1[36] = jj_gen;
+        ;
+      }
+      column = ColumnDefinitions();
+columnDefinition=column.get(0);
+                        {if ("" != null) return new AlterTable(table,new AddColumn(AlterTableType.ADD,columnDefinition));}
+      break;
+      }
+    default:
+      jj_la1[37] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
     }
     throw new Error("Missing return statement in function");
   }
@@ -542,115 +846,104 @@ foreignKeyClause = new ForeignKeyClause(foreignTable);
     finally { jj_save(8, xla); }
   }
 
-  private boolean jj_3_8()
+  private boolean jj_2_10(int xla)
  {
-    if (jj_scan_token(T_SET)) return true;
-    if (jj_scan_token(T_NULL)) return true;
-    return false;
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_10(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(9, xla); }
   }
 
-  private boolean jj_3R_13()
+  private boolean jj_2_11(int xla)
  {
-    if (jj_scan_token(T_OPEN_BRACKET)) return true;
-    if (jj_3R_10()) return true;
-    return false;
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_11(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(10, xla); }
   }
 
-  private boolean jj_3R_7()
+  private boolean jj_2_12(int xla)
  {
-    if (jj_scan_token(T_PRIMARY_KEY)) return true;
-    if (jj_3R_13()) return true;
-    return false;
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_12(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(11, xla); }
   }
 
-  private boolean jj_3_3()
+  private boolean jj_3R_12()
  {
-    if (jj_scan_token(T_COMMA)) return true;
-    if (jj_3R_10()) return true;
+    if (jj_scan_token(T_FOREIGN)) return true;
+    if (jj_scan_token(T_KEY)) return true;
+    if (jj_3R_18()) return true;
     return false;
   }
 
   private boolean jj_3R_11()
  {
-    if (jj_scan_token(T_ON)) return true;
-    if (jj_scan_token(T_DELETE)) return true;
+    if (jj_scan_token(T_UNIQUE)) return true;
+    if (jj_3R_18()) return true;
     return false;
   }
 
-  private boolean jj_3R_10()
+  private boolean jj_3_8()
  {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(41)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(44)) return true;
-    }
+    if (jj_scan_token(T_DEFAULT)) return true;
+    if (jj_3R_13()) return true;
     return false;
   }
 
-  private boolean jj_3_2()
- {
-    if (jj_3R_10()) return true;
-    if (jj_scan_token(45)) return true;
-    if (jj_3R_10()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_6()
- {
-    if (jj_scan_token(T_CONSTRAINT)) return true;
-    if (jj_3R_10()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_12()
+  private boolean jj_3R_15()
  {
     if (jj_scan_token(T_ON)) return true;
     if (jj_scan_token(T_UPDATE)) return true;
     return false;
   }
 
-  private boolean jj_3_5()
+  private boolean jj_3R_10()
  {
-    if (jj_scan_token(T_DEFAULT)) return true;
-    if (jj_3R_10()) return true;
+    if (jj_scan_token(T_PRIMARY)) return true;
+    if (jj_scan_token(T_KEY)) return true;
+    if (jj_3R_18()) return true;
     return false;
   }
 
   private boolean jj_3_7()
- {
-    if (jj_3R_12()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_9()
- {
-    if (jj_scan_token(T_FOREIGN_KEY)) return true;
-    if (jj_3R_13()) return true;
-    return false;
-  }
-
-  private boolean jj_3_6()
- {
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
-  private boolean jj_3_4()
  {
     if (jj_scan_token(T_NOT)) return true;
     if (jj_scan_token(T_NULL)) return true;
     return false;
   }
 
-  private boolean jj_3R_8()
+  private boolean jj_3R_13()
  {
-    if (jj_scan_token(T_UNIQUE)) return true;
-    if (jj_3R_13()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(52)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(55)) return true;
+    }
     return false;
   }
 
-  private boolean jj_3_9()
+  private boolean jj_3R_8()
+ {
+    if (jj_scan_token(T_DROP)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_16()) {
+    jj_scanpos = xsp;
+    if (jj_3R_17()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3_2()
+ {
+    if (jj_3R_8()) return true;
+    return false;
+  }
+
+  private boolean jj_3_12()
  {
     if (jj_scan_token(T_DEFERRABLE)) return true;
     if (jj_scan_token(T_INITIALLY)) return true;
@@ -660,18 +953,106 @@ foreignKeyClause = new ForeignKeyClause(foreignTable);
 
   private boolean jj_3_1()
  {
+    if (jj_3R_7()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_9()
+ {
+    if (jj_scan_token(T_CONSTRAINT)) return true;
+    if (jj_3R_13()) return true;
+    return false;
+  }
+
+  private boolean jj_3_5()
+ {
+    if (jj_3R_13()) return true;
+    if (jj_scan_token(57)) return true;
+    if (jj_3R_13()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_14()
+ {
+    if (jj_scan_token(T_ON)) return true;
+    if (jj_scan_token(T_DELETE)) return true;
+    return false;
+  }
+
+  private boolean jj_3_3()
+ {
     if (jj_scan_token(T_COMMA)) return true;
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3R_6()) jj_scanpos = xsp;
+    if (jj_3R_9()) jj_scanpos = xsp;
     xsp = jj_scanpos;
-    if (jj_3R_7()) {
+    if (jj_3R_10()) {
     jj_scanpos = xsp;
-    if (jj_3R_8()) {
+    if (jj_3R_11()) {
     jj_scanpos = xsp;
-    if (jj_3R_9()) return true;
+    if (jj_3R_12()) return true;
     }
     }
+    return false;
+  }
+
+  private boolean jj_3_4()
+ {
+    if (jj_3R_13()) return true;
+    if (jj_scan_token(57)) return true;
+    if (jj_3R_13()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_17()
+ {
+    if (jj_scan_token(T_INDEX)) return true;
+    return false;
+  }
+
+  private boolean jj_3_10()
+ {
+    if (jj_3R_15()) return true;
+    return false;
+  }
+
+  private boolean jj_3_9()
+ {
+    if (jj_3R_14()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_7()
+ {
+    if (jj_scan_token(T_CREATE)) return true;
+    if (jj_scan_token(T_TABLE)) return true;
+    return false;
+  }
+
+  private boolean jj_3_11()
+ {
+    if (jj_scan_token(T_SET)) return true;
+    if (jj_scan_token(T_NULL)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_18()
+ {
+    if (jj_scan_token(T_OPEN_BRACKET)) return true;
+    if (jj_3R_13()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_16()
+ {
+    if (jj_scan_token(T_TABLE)) return true;
+    return false;
+  }
+
+  private boolean jj_3_6()
+ {
+    if (jj_scan_token(T_COMMA)) return true;
+    if (jj_3R_13()) return true;
     return false;
   }
 
@@ -686,7 +1067,7 @@ foreignKeyClause = new ForeignKeyClause(foreignTable);
   private Token jj_scanpos, jj_lastpos;
   private int jj_la;
   private int jj_gen;
-  final private int[] jj_la1 = new int[18];
+  final private int[] jj_la1 = new int[38];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -694,12 +1075,12 @@ foreignKeyClause = new ForeignKeyClause(foreignTable);
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x0,0x8000,0x100000,0x200000,0x200000,0x10020800,0x0,0x62800,0x62800,0x1000,0x800,0x20000,0x400,0xf800000,0x100,0x2000,0x0,0x0,};
+      jj_la1_0 = new int[] {0x80,0x0,0x40000,0x1000000,0x2000000,0x2000000,0x102000,0x0,0x0,0x0,0x512000,0x512000,0x8000,0x2000,0x100000,0x1000,0xf8000000,0x400,0x10000,0x0,0x0,0x40000,0x0,0x1,0x40000,0x0,0x1,0x200100,0x100000,0x40000,0x0,0x1,0x1000,0x0,0x0,0x1000,0x0,0x0,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x1200,0x0,0x0,0x0,0x0,0x0,0x1200,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xf,0x20,};
+      jj_la1_1 = new int[] {0x8000,0x900000,0x0,0x0,0x0,0x0,0x1,0x1000000,0x900000,0x900000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xf0,0x200,0x0,0x1000000,0x0,0x0,0x1000000,0x0,0x0,0x0,0x0,0x1000000,0x0,0x0,0x6000,0x6000,0x900000,0x20000,0x50000,};
    }
-  final private JJCalls[] jj_2_rtns = new JJCalls[9];
+  final private JJCalls[] jj_2_rtns = new JJCalls[12];
   private boolean jj_rescan = false;
   private int jj_gc = 0;
 
@@ -714,7 +1095,7 @@ foreignKeyClause = new ForeignKeyClause(foreignTable);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 18; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 38; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -729,7 +1110,7 @@ foreignKeyClause = new ForeignKeyClause(foreignTable);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 18; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 38; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -740,7 +1121,7 @@ foreignKeyClause = new ForeignKeyClause(foreignTable);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 18; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 38; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -751,7 +1132,7 @@ foreignKeyClause = new ForeignKeyClause(foreignTable);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 18; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 38; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -761,7 +1142,7 @@ foreignKeyClause = new ForeignKeyClause(foreignTable);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 18; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 38; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -771,7 +1152,7 @@ foreignKeyClause = new ForeignKeyClause(foreignTable);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 18; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 38; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -884,12 +1265,12 @@ foreignKeyClause = new ForeignKeyClause(foreignTable);
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[46];
+    boolean[] la1tokens = new boolean[58];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 18; i++) {
+    for (int i = 0; i < 38; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -901,7 +1282,7 @@ foreignKeyClause = new ForeignKeyClause(foreignTable);
         }
       }
     }
-    for (int i = 0; i < 46; i++) {
+    for (int i = 0; i < 58; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
@@ -928,7 +1309,7 @@ foreignKeyClause = new ForeignKeyClause(foreignTable);
 
   private void jj_rescan_token() {
     jj_rescan = true;
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < 12; i++) {
     try {
       JJCalls p = jj_2_rtns[i];
       do {
@@ -944,6 +1325,9 @@ foreignKeyClause = new ForeignKeyClause(foreignTable);
             case 6: jj_3_7(); break;
             case 7: jj_3_8(); break;
             case 8: jj_3_9(); break;
+            case 9: jj_3_10(); break;
+            case 10: jj_3_11(); break;
+            case 11: jj_3_12(); break;
           }
         }
         p = p.next;

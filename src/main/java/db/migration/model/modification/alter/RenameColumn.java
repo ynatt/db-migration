@@ -1,4 +1,4 @@
-package db.migration.model.modification.rename;
+package db.migration.model.modification.alter;
 
 import db.migration.model.modification.DBChange;
 

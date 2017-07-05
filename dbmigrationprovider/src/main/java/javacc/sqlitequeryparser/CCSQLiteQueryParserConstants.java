@@ -11,81 +11,103 @@ public interface CCSQLiteQueryParserConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int T_CREATE_TABLE = 7;
+  int T_CREATE = 7;
   /** RegularExpression Id. */
-  int T_OPEN_BRACKET = 8;
+  int T_TABLE = 8;
   /** RegularExpression Id. */
-  int T_CLOSE_BRACKET = 9;
+  int T_DROP = 9;
   /** RegularExpression Id. */
-  int T_COMMA = 10;
+  int T_OPEN_BRACKET = 10;
   /** RegularExpression Id. */
-  int T_PRIMARY_KEY = 11;
+  int T_CLOSE_BRACKET = 11;
   /** RegularExpression Id. */
-  int T_AUTOINCREMENT = 12;
+  int T_COMMA = 12;
   /** RegularExpression Id. */
-  int T_NOT = 13;
+  int T_PRIMARY = 13;
   /** RegularExpression Id. */
-  int T_NULL = 14;
+  int T_KEY = 14;
   /** RegularExpression Id. */
-  int T_IF = 15;
+  int T_AUTOINCREMENT = 15;
   /** RegularExpression Id. */
-  int T_EXISTS = 16;
+  int T_NOT = 16;
   /** RegularExpression Id. */
-  int T_UNIQUE = 17;
+  int T_NULL = 17;
   /** RegularExpression Id. */
-  int T_DEFAULT = 18;
+  int T_IF = 18;
   /** RegularExpression Id. */
-  int T_APOSTR = 19;
+  int T_EXISTS = 19;
   /** RegularExpression Id. */
-  int T_CONSTRAINT = 20;
+  int T_UNIQUE = 20;
   /** RegularExpression Id. */
-  int T_ON = 21;
+  int T_INDEX = 21;
   /** RegularExpression Id. */
-  int T_CONFLICT = 22;
+  int T_DEFAULT = 22;
   /** RegularExpression Id. */
-  int T_ROLLBACK = 23;
+  int T_APOSTR = 23;
   /** RegularExpression Id. */
-  int T_ABORT = 24;
+  int T_CONSTRAINT = 24;
   /** RegularExpression Id. */
-  int T_FAIL = 25;
+  int T_ON = 25;
   /** RegularExpression Id. */
-  int T_IGNORE = 26;
+  int T_CONFLICT = 26;
   /** RegularExpression Id. */
-  int T_REPLACE = 27;
+  int T_ROLLBACK = 27;
   /** RegularExpression Id. */
-  int T_FOREIGN_KEY = 28;
+  int T_ABORT = 28;
   /** RegularExpression Id. */
-  int T_REFERENCES = 29;
+  int T_FAIL = 29;
   /** RegularExpression Id. */
-  int T_DELETE = 30;
+  int T_IGNORE = 30;
   /** RegularExpression Id. */
-  int T_UPDATE = 31;
+  int T_REPLACE = 31;
   /** RegularExpression Id. */
-  int T_SET = 32;
+  int T_FOREIGN = 32;
   /** RegularExpression Id. */
-  int T_CASCADE = 33;
+  int T_REFERENCES = 33;
   /** RegularExpression Id. */
-  int T_RESTRICT = 34;
+  int T_DELETE = 34;
   /** RegularExpression Id. */
-  int T_NO = 35;
+  int T_UPDATE = 35;
   /** RegularExpression Id. */
-  int T_ACTION = 36;
+  int T_SET = 36;
   /** RegularExpression Id. */
-  int T_DEFERRABLE = 37;
+  int T_CASCADE = 37;
   /** RegularExpression Id. */
-  int T_INITIALLY = 38;
+  int T_RESTRICT = 38;
   /** RegularExpression Id. */
-  int T_DEFERRED = 39;
+  int T_NO = 39;
   /** RegularExpression Id. */
-  int T_IMMEDIATE = 40;
+  int T_ACTION = 40;
   /** RegularExpression Id. */
-  int T_IDENTIFIER = 41;
+  int T_DEFERRABLE = 41;
   /** RegularExpression Id. */
-  int LETTER = 42;
+  int T_INITIALLY = 42;
   /** RegularExpression Id. */
-  int NUMBER = 43;
+  int T_DEFERRED = 43;
   /** RegularExpression Id. */
-  int T_QUOTED_IDENTIFIER = 44;
+  int T_IMMEDIATE = 44;
+  /** RegularExpression Id. */
+  int T_ASC = 45;
+  /** RegularExpression Id. */
+  int T_DESC = 46;
+  /** RegularExpression Id. */
+  int T_ALTER = 47;
+  /** RegularExpression Id. */
+  int T_ADD = 48;
+  /** RegularExpression Id. */
+  int T_COLUMN = 49;
+  /** RegularExpression Id. */
+  int T_RENAME = 50;
+  /** RegularExpression Id. */
+  int T_TO = 51;
+  /** RegularExpression Id. */
+  int T_IDENTIFIER = 52;
+  /** RegularExpression Id. */
+  int LETTER = 53;
+  /** RegularExpression Id. */
+  int NUMBER = 54;
+  /** RegularExpression Id. */
+  int T_QUOTED_IDENTIFIER = 55;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -99,17 +121,21 @@ public interface CCSQLiteQueryParserConstants {
     "\"\\\\\"",
     "\"\\t\"",
     "\" \"",
-    "\"CREATE TABLE\"",
+    "\"CREATE\"",
+    "\"TABLE\"",
+    "\"DROP\"",
     "\"(\"",
     "\")\"",
     "\",\"",
-    "\"PRIMARY KEY\"",
+    "\"PRIMARY\"",
+    "\"KEY\"",
     "\"AUTOINCREMENT\"",
     "\"NOT\"",
     "\"NULL\"",
     "\"IF\"",
     "\"EXISTS\"",
     "\"UNIQUE\"",
+    "\"INDEX\"",
     "\"DEFAULT\"",
     "<T_APOSTR>",
     "\"CONSTRAINT\"",
@@ -120,7 +146,7 @@ public interface CCSQLiteQueryParserConstants {
     "\"FAIL\"",
     "\"IGNORE\"",
     "\"REPLACE\"",
-    "\"FOREIGN KEY\"",
+    "\"FOREIGN\"",
     "\"REFERENCES\"",
     "\"DELETE\"",
     "\"UPDATE\"",
@@ -133,10 +159,18 @@ public interface CCSQLiteQueryParserConstants {
     "\"INITIALLY\"",
     "\"DEFERRED\"",
     "\"IMMEDIATE\"",
+    "\"ASC\"",
+    "\"DESC\"",
+    "\"ALTER\"",
+    "\"ADD\"",
+    "\"COLUMN\"",
+    "\"RENAME\"",
+    "\"TO\"",
     "<T_IDENTIFIER>",
     "<LETTER>",
     "<NUMBER>",
     "<T_QUOTED_IDENTIFIER>",
+    "\";\"",
     "\".\"",
   };
 

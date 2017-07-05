@@ -1,26 +1,49 @@
 package db.migration.model.modification.create;
 
 import db.migration.model.Index;
+import db.migration.model.Table;
+import db.migration.model.modification.DBChange;
 
-public abstract class CreateIndex {
-    private String schemaName;
-    private String tableName;
+public class CreateIndex implements DBChange {
+    private Table table;
+    private boolean ifNotExists = false;
+    private boolean isUnique = false;
     private Index index;
 
-    public String getSchemaName() {
-        return schemaName;
+    public CreateIndex() {
     }
 
-    public void setSchemaName(String schemaName) {
-        this.schemaName = schemaName;
+    public CreateIndex(Index index) {
+        this.index = index;
     }
 
-    public String getTableName() {
-        return tableName;
+    public CreateIndex(Table table, Index index) {
+        this.table = table;
+        this.index = index;
     }
 
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
+    public Table getTable() {
+        return table;
+    }
+
+    public void setTable(Table table) {
+        this.table = table;
+    }
+
+    public boolean isIfNotExists() {
+        return ifNotExists;
+    }
+
+    public void setIfNotExists(boolean ifNotExists) {
+        this.ifNotExists = ifNotExists;
+    }
+
+    public boolean isUnique() {
+        return isUnique;
+    }
+
+    public void setUnique(boolean unique) {
+        isUnique = unique;
     }
 
     public Index getIndex() {
@@ -29,5 +52,10 @@ public abstract class CreateIndex {
 
     public void setIndex(Index index) {
         this.index = index;
+    }
+
+    @Override
+    public String getChangeType() {
+        return "CREATE INDEX";
     }
 }
