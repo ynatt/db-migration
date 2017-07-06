@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 public class SQLiteTrackingStatement implements TrackingStatement {
     private Statement statement;
     private DBChangeTracker tracker;
-    SQLQueryParser parser;
+    private SQLQueryParser parser;
 
     public SQLiteTrackingStatement(Statement statement, DBChangeTracker tracker,SQLQueryParser parser) {
         this.statement = statement;

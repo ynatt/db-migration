@@ -11,103 +11,123 @@ public interface CCSQLiteQueryParserConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int T_CREATE = 7;
+  int DIGIT = 7;
   /** RegularExpression Id. */
-  int T_TABLE = 8;
+  int INTEGER = 8;
   /** RegularExpression Id. */
-  int T_DROP = 9;
+  int SGN = 9;
   /** RegularExpression Id. */
-  int T_OPEN_BRACKET = 10;
+  int REAL = 10;
   /** RegularExpression Id. */
-  int T_CLOSE_BRACKET = 11;
+  int TEXT = 11;
   /** RegularExpression Id. */
-  int T_COMMA = 12;
+  int BLOB = 12;
   /** RegularExpression Id. */
-  int T_PRIMARY = 13;
+  int HEX = 13;
   /** RegularExpression Id. */
-  int T_KEY = 14;
+  int T_CREATE = 14;
   /** RegularExpression Id. */
-  int T_AUTOINCREMENT = 15;
+  int T_TABLE = 15;
   /** RegularExpression Id. */
-  int T_NOT = 16;
+  int T_DROP = 16;
   /** RegularExpression Id. */
-  int T_NULL = 17;
+  int T_OPEN_BRACKET = 17;
   /** RegularExpression Id. */
-  int T_IF = 18;
+  int T_CLOSE_BRACKET = 18;
   /** RegularExpression Id. */
-  int T_EXISTS = 19;
+  int T_COMMA = 19;
   /** RegularExpression Id. */
-  int T_UNIQUE = 20;
+  int T_PRIMARY = 20;
   /** RegularExpression Id. */
-  int T_INDEX = 21;
+  int T_KEY = 21;
   /** RegularExpression Id. */
-  int T_DEFAULT = 22;
+  int T_AUTOINCREMENT = 22;
   /** RegularExpression Id. */
-  int T_APOSTR = 23;
+  int T_NOT = 23;
   /** RegularExpression Id. */
-  int T_CONSTRAINT = 24;
+  int T_NULL = 24;
   /** RegularExpression Id. */
-  int T_ON = 25;
+  int T_IF = 25;
   /** RegularExpression Id. */
-  int T_CONFLICT = 26;
+  int T_EXISTS = 26;
   /** RegularExpression Id. */
-  int T_ROLLBACK = 27;
+  int T_UNIQUE = 27;
   /** RegularExpression Id. */
-  int T_ABORT = 28;
+  int T_INDEX = 28;
   /** RegularExpression Id. */
-  int T_FAIL = 29;
+  int T_DEFAULT = 29;
   /** RegularExpression Id. */
-  int T_IGNORE = 30;
+  int T_APOSTR = 30;
   /** RegularExpression Id. */
-  int T_REPLACE = 31;
+  int T_CONSTRAINT = 31;
   /** RegularExpression Id. */
-  int T_FOREIGN = 32;
+  int T_ON = 32;
   /** RegularExpression Id. */
-  int T_REFERENCES = 33;
+  int T_CONFLICT = 33;
   /** RegularExpression Id. */
-  int T_DELETE = 34;
+  int T_ROLLBACK = 34;
   /** RegularExpression Id. */
-  int T_UPDATE = 35;
+  int T_ABORT = 35;
   /** RegularExpression Id. */
-  int T_SET = 36;
+  int T_FAIL = 36;
   /** RegularExpression Id. */
-  int T_CASCADE = 37;
+  int T_IGNORE = 37;
   /** RegularExpression Id. */
-  int T_RESTRICT = 38;
+  int T_REPLACE = 38;
   /** RegularExpression Id. */
-  int T_NO = 39;
+  int T_FOREIGN = 39;
   /** RegularExpression Id. */
-  int T_ACTION = 40;
+  int T_REFERENCES = 40;
   /** RegularExpression Id. */
-  int T_DEFERRABLE = 41;
+  int T_DELETE = 41;
   /** RegularExpression Id. */
-  int T_INITIALLY = 42;
+  int T_UPDATE = 42;
   /** RegularExpression Id. */
-  int T_DEFERRED = 43;
+  int T_SET = 43;
   /** RegularExpression Id. */
-  int T_IMMEDIATE = 44;
+  int T_CASCADE = 44;
   /** RegularExpression Id. */
-  int T_ASC = 45;
+  int T_RESTRICT = 45;
   /** RegularExpression Id. */
-  int T_DESC = 46;
+  int T_NO = 46;
   /** RegularExpression Id. */
-  int T_ALTER = 47;
+  int T_ACTION = 47;
   /** RegularExpression Id. */
-  int T_ADD = 48;
+  int T_DEFERRABLE = 48;
   /** RegularExpression Id. */
-  int T_COLUMN = 49;
+  int T_INITIALLY = 49;
   /** RegularExpression Id. */
-  int T_RENAME = 50;
+  int T_DEFERRED = 50;
   /** RegularExpression Id. */
-  int T_TO = 51;
+  int T_IMMEDIATE = 51;
   /** RegularExpression Id. */
-  int T_IDENTIFIER = 52;
+  int T_ASC = 52;
   /** RegularExpression Id. */
-  int LETTER = 53;
+  int T_DESC = 53;
   /** RegularExpression Id. */
-  int NUMBER = 54;
+  int T_ALTER = 54;
   /** RegularExpression Id. */
-  int T_QUOTED_IDENTIFIER = 55;
+  int T_ADD = 55;
+  /** RegularExpression Id. */
+  int T_COLUMN = 56;
+  /** RegularExpression Id. */
+  int T_RENAME = 57;
+  /** RegularExpression Id. */
+  int T_TO = 58;
+  /** RegularExpression Id. */
+  int T_INSERT = 59;
+  /** RegularExpression Id. */
+  int T_INTO = 60;
+  /** RegularExpression Id. */
+  int T_VALUES = 61;
+  /** RegularExpression Id. */
+  int T_IDENTIFIER = 62;
+  /** RegularExpression Id. */
+  int LETTER = 63;
+  /** RegularExpression Id. */
+  int NUMBER = 64;
+  /** RegularExpression Id. */
+  int T_QUOTED_IDENTIFIER = 65;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -121,6 +141,13 @@ public interface CCSQLiteQueryParserConstants {
     "\"\\\\\"",
     "\"\\t\"",
     "\" \"",
+    "<DIGIT>",
+    "<INTEGER>",
+    "<SGN>",
+    "<REAL>",
+    "<TEXT>",
+    "<BLOB>",
+    "<HEX>",
     "\"CREATE\"",
     "\"TABLE\"",
     "\"DROP\"",
@@ -166,6 +193,9 @@ public interface CCSQLiteQueryParserConstants {
     "\"COLUMN\"",
     "\"RENAME\"",
     "\"TO\"",
+    "\"INSERT\"",
+    "\"INTO\"",
+    "\"VALUES\"",
     "<T_IDENTIFIER>",
     "<LETTER>",
     "<NUMBER>",

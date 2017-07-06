@@ -1,5 +1,6 @@
 package db.migration.provider;
 
+import db.migration.model.Column;
 import db.migration.model.modification.DBChange;
 import db.migration.model.modification.ExecutableDBChange;
 import db.migration.model.modification.alter.AddColumn;
@@ -8,11 +9,13 @@ import db.migration.model.modification.alter.RenameTo;
 import db.migration.model.modification.create.*;
 import db.migration.model.modification.drop.DropIndex;
 import db.migration.model.modification.drop.DropTable;
+import db.migration.model.modification.insert.InsertIntoTable;
 import db.migration.provider.model.*;
 import db.migration.service.DBExecutor;
 
 import java.sql.Connection;
 import java.util.Iterator;
+import java.util.List;
 
 public class SQLiteExecutor implements DBExecutor {
     private Connection connection;
@@ -48,6 +51,13 @@ public class SQLiteExecutor implements DBExecutor {
             String sql = makeSQLQueryAlterTable((AlterTable) dbChange);
             return new ExecutableAlterTable(sql);
         }
+        if(dbChange instanceof InsertIntoTable){
+            String sql = makeSQLQueryInsertIntoTable((InsertIntoTable) dbChange);
+            return new ExecutableInsertIntoTable(sql);
+        }
+        if(dbChange instanceof AbstractExecutableDBChange){
+            return (AbstractExecutableDBChange) dbChange;
+        }
 
         return null;
     }
@@ -65,11 +75,11 @@ public class SQLiteExecutor implements DBExecutor {
             columnDefinition = iter.next();
             sql.append(columnDefinition.getColumnName());
             sql.append(" ");
-            sql.append(columnDefinition.getColomnDataType());
+            sql.append(columnDefinition.getColumnDataType());
             if (columnDefinition.getColumnSpecs() != null) {
                 for (String spec : columnDefinition.getColumnSpecs()) {
                     sql.append(" ");
-                    sql.append(spec.toUpperCase());
+                    sql.append(spec);
                 }
             }
             if (iter.hasNext()) {
@@ -158,8 +168,43 @@ public class SQLiteExecutor implements DBExecutor {
         }
         return sql.toString();
     }
+
+    private String makeSQLQueryInsertIntoTable(InsertIntoTable insertIntoTable){
+        StringBuilder sql = new StringBuilder(insertIntoTable.getChangeType());
+        sql.append(" ");
+        sql.append(insertIntoTable.getTable().getFullName());
+        sql.append(putColumnsIntoBrackets(insertIntoTable.getColumns(),"(",")"));
+        sql.append(" VALUES");
+        String value;
+        for(Iterator<String> iterator = insertIntoTable.getValues().iterator();iterator.hasNext();){
+            value=iterator.next();
+            sql.append(value);
+            if(iterator.hasNext()){
+                sql.append(" , ");
+            }
+        }
+        return sql.toString();
+    }
+
     @Override
     public Connection getConnection() {
         return connection;
+    }
+
+    private String putColumnsIntoBrackets(List<Column> columns,String openBracket, String closeBracket){
+        StringBuilder result = new StringBuilder();
+        result.append(openBracket);
+        result.append(" ");
+        Column column;
+        for(Iterator<Column> iterator = columns.iterator();iterator.hasNext();){
+            column = iterator.next();
+            result.append(column.getColumnName());
+            if(iterator.hasNext()){
+                result.append(" , ");
+            }
+        }
+        result.append(" ");
+        result.append(closeBracket);
+        return result.toString();
     }
 }

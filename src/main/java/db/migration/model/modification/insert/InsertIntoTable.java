@@ -1,10 +1,34 @@
 package db.migration.model.modification.insert;
 
+import db.migration.model.Column;
 import db.migration.model.Table;
+import db.migration.model.modification.DBChange;
 
-public abstract class InsertIntoTable {
+import java.util.List;
+
+public class InsertIntoTable implements DBChange {
     private Table table;
-    private TableValues values;
+    private List<Column> columns;
+    private List<String> values;
+
+    public InsertIntoTable() {
+
+    }
+
+    public InsertIntoTable(Table table) {
+        this.table = table;
+    }
+
+    public InsertIntoTable(Table table, List<Column> columns) {
+        this.table = table;
+        this.columns = columns;
+    }
+
+    public InsertIntoTable(Table table, List<Column> columns, List<String> values) {
+        this.table = table;
+        this.columns = columns;
+        this.values = values;
+    }
 
     public Table getTable() {
         return table;
@@ -14,11 +38,24 @@ public abstract class InsertIntoTable {
         this.table = table;
     }
 
-    public TableValues getValues() {
+    public List<String> getValues() {
         return values;
     }
 
-    public void setValues(TableValues values) {
+    public void setValues(List<String> values) {
         this.values = values;
+    }
+
+    public List<Column> getColumns() {
+        return columns;
+    }
+
+    public void setColumns(List<Column> columns) {
+        this.columns = columns;
+    }
+
+    @Override
+    public String getChangeType() {
+        return "INSERT INTO";
     }
 }

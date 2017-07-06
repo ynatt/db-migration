@@ -25,12 +25,12 @@ public class ColumnDefinition {
         this.columnName = columnName;
     }
 
-    public String getColomnDataType() {
+    public String getColumnDataType() {
         return columnDataType;
     }
 
-    public void setColomnDataType(String colomnDataType) {
-        this.columnDataType = colomnDataType;
+    public void setColumnDataType(String columnDataType) {
+        this.columnDataType = columnDataType;
     }
 
     public List<String> getColumnSpecs() {

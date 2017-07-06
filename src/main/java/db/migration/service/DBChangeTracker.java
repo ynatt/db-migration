@@ -1,6 +1,7 @@
 package db.migration.service;
 
 import db.migration.model.modification.DBChange;
+import db.migration.model.modification.ExecutableDBChange;
 
 
 public class DBChangeTracker {
@@ -20,7 +21,10 @@ public class DBChangeTracker {
 
     public void trackChange(DBChange change){
         state.addChange(change);
-        System.out.println(change);
+        change.showTrackingMessage();
+        if(change instanceof ExecutableDBChange){
+            System.out.println(((ExecutableDBChange) change).getQuery());
+        }
     }
 }
 

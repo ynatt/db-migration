@@ -66,7 +66,7 @@ public class SQLiteParserByMetaData implements SQLQueryParser {
                     ResultSet columns = metaData.getColumns(null,null,tableName,null);
                     while (columns.next()){
                         columnDefinition.setColumnName(columns.getString("COLUMN_NAME"));
-                        columnDefinition.setColomnDataType(columns.getString("TYPE_NAME"));
+                        columnDefinition.setColumnDataType(columns.getString("TYPE_NAME"));
                         if(columns.getString("COLUMN_DEF")!=null){
                             columnDefinition.addColumnSpec("DEFAULT '"+columns.getString("COLUMN_DEF")+"'");
                         }

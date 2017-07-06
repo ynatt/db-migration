@@ -12,16 +12,22 @@ import db.migration.model.modification.*;
 import db.migration.model.modification.create.*;
 import db.migration.model.modification.alter.*;
 import db.migration.model.modification.drop.*;
+import db.migration.model.modification.insert.*;
 import java.util.ArrayList;
 import java.util.List;
 
 
 
 public class CCSQLiteQueryParser{
+	List<ParseException> parseErrors = new ArrayList<ParseException>();
 
     public DBChange analiseQuery() throws ParseException, TokenMgrError{
         return analise();
     }
+	
+	public List<ParseException> getParseErrors() {
+        return parseErrors;
+	}
 }
 
 PARSER_END(CCSQLiteQueryParser)
@@ -30,15 +36,29 @@ SKIP:
 {
     "\n" | "\r" | "\r\n" | "\\" | "\t" | " "
 }
+TOKEN :
+{
+	<#DIGIT:["0"-"9"]>
+   |<INTEGER:(<DIGIT>)+>
+   |<#SGN:("+"|"-")?>
+   |<REAL: <SGN>((<INTEGER>)? "." <INTEGER> ( ["e","E"] (<SGN>)? <INTEGER>)?
+            |
+            <SGN><INTEGER> "." (["e","E"] (<SGN>)? <INTEGER>)?
+            |
+            <SGN><INTEGER> ["e","E"] (<SGN>)? <INTEGER>)>
+   |<TEXT:("\""(~["\""])*"\""|"'"(~["'"])*"'")>
+   |<BLOB:"x'"(<HEX>)*"'">
+   |<#HEX:(<INTEGER>|["A"-"F","a"-"f"])>
+}
 
 TOKEN [IGNORE_CASE]:
 {
     <T_CREATE:"CREATE">
    |<T_TABLE:"TABLE">
    |<T_DROP:"DROP">
-   |<T_OPEN_BRACKET :("(")>
-   |<T_CLOSE_BRACKET :(")")>
-   |<T_COMMA :(",")>
+   |<T_OPEN_BRACKET :"(">
+   |<T_CLOSE_BRACKET :")">
+   |<T_COMMA :",">
    |<T_PRIMARY:"PRIMARY">
    |<T_KEY:"KEY">
    |<T_AUTOINCREMENT :"AUTOINCREMENT">
@@ -78,6 +98,9 @@ TOKEN [IGNORE_CASE]:
    |<T_COLUMN:"COLUMN">
    |<T_RENAME:"RENAME">
    |<T_TO:"TO">
+   |<T_INSERT:"INSERT">
+   |<T_INTO:"INTO">
+   |<T_VALUES:"VALUES">
 }
 
 TOKEN [IGNORE_CASE]:
@@ -85,25 +108,30 @@ TOKEN [IGNORE_CASE]:
 	<T_IDENTIFIER: <LETTER>(<LETTER>|<NUMBER>)*>
    |<#LETTER:["$","A"-"Z","_","a"-"z"]>
    |<#NUMBER:["0"-"9"]>
-   |<T_QUOTED_IDENTIFIER: "\"" (~["\n","\r","\""])+ "\"" | ("'" (~["\n","\r","'"])+ "'") | ( "[" ~["0"-"9","]"] (~["\n","\r","]"])* "]" ) | ("`" (~["\n","\r","'"])+ "`")>
+   |<T_QUOTED_IDENTIFIER: ("[" (~["\n","\r","]","["])* "]") >
 }
 
 DBChange analise():
 {
 	DBChange dbChange = null;
 }
-{
-		(	LOOKAHEAD(2)
-			dbChange = createTable()
-			| 
-			LOOKAHEAD(2)
-			dbChange = drop()
-			|
-			dbChange = createIndex()
-			|
-			dbChange = alterTable()
-		)
-		
+{	try {
+			(	LOOKAHEAD(2)
+				dbChange = createTable()
+				|	 
+				LOOKAHEAD(2)
+				dbChange = drop()
+				|
+				dbChange = createIndex()
+				|
+				dbChange = alterTable()
+				|
+				dbChange = insertIntoTable()
+			)
+		} catch(ParseException e){
+			parseErrors.add(e);
+			throw e;
+		}
 		{
 			return dbChange;
 		}
@@ -117,6 +145,7 @@ String getObjectName():
 	(
 		token = <T_IDENTIFIER>
 		|token = <T_QUOTED_IDENTIFIER>
+		|token = <TEXT>
 	)
 	{
 		return token.image;
@@ -485,8 +514,77 @@ DBChange alterTable():
 	)
 }
 
+DBChange insertIntoTable():
+{
+	Table table = null;
+	List<Column> columns = null;
+	List<String> values = new ArrayList<String>();
+	String value = null;
+	StringBuilder valuesBuilder = new StringBuilder();
+	boolean hasComma = false;
+}
+{
+	<T_INSERT> <T_INTO>
+	table = Table()
+	columns = getColumns()
+	<T_VALUES>
+	(	
+		(
+			[<T_COMMA> ]
+			<T_OPEN_BRACKET> {valuesBuilder.append(" ( ");}
+			value = getInsertValue()	
+		{ 		
+			hasComma=false;
+			valuesBuilder.append(value);
+		}
+			<T_CLOSE_BRACKET>{valuesBuilder.append(" )");}
+			{
+				values.add(valuesBuilder.toString());
+				valuesBuilder = new StringBuilder();
+			}
+		)
+	)+
+	[";"]
+	<EOF>	
+	{
+		return new InsertIntoTable(table,columns,values);
+	}
+}
 
-
+String getInsertValue():
+{
+	Token columnValue = null;
+	Token comma = null;
+	StringBuilder value = new StringBuilder();
+}
+{	
+	(
+		(
+			[comma = <T_COMMA>]
+			( 
+				columnValue = <INTEGER>
+				|
+				columnValue = <BLOB>
+				|
+				columnValue = <REAL>
+				|
+				columnValue = <TEXT>
+				|
+				columnValue = <T_NULL>
+			)
+			{
+			if(comma!=null){
+				value.append(" , ");
+			}
+			comma=null;
+			value.append(columnValue.image);
+		}
+		)+	
+	)
+	{
+		return value.toString();
+	}
+}
 
 
 
