@@ -4,8 +4,11 @@ package javacc.sqlitequeryparser;
 
 import db.migration.model.*;
 import db.migration.model.modification.*;
-import db.migration.model.modification.create.*;
-import db.migration.model.modification.alter.*;
+import db.migration.model.modification.alter.table.*;
+import db.migration.model.modification.alter.table.enums.AlterTableType;
+import db.migration.model.modification.create.table.enums.*;
+import db.migration.model.modification.create.index.CreateIndex;
+import db.migration.model.modification.create.table.*;
 import db.migration.model.modification.drop.*;
 import db.migration.model.modification.insert.*;
 import java.util.ArrayList;
@@ -142,7 +145,7 @@ createTable.setIfNotExists(true);
           jj_la1[4] = jj_gen;
           ;
         }
-createTable.addTableConstraint(new IndexedConstraint(constraintName,ConstraintType.PRIMARY_KEY,columns,conflictDecision));
+createTable.addTableConstraint(new IndexedConstraint(constraintName, ConstraintType.PRIMARY_KEY,columns,conflictDecision));
         break;
         }
       case T_UNIQUE:{

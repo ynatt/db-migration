@@ -3,6 +3,10 @@ package db.migration.model.modification.drop;
 import db.migration.model.Table;
 import db.migration.model.modification.DBChange;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class DropTable implements DBChange {
     private Table table;
     private boolean ifExists = false;
@@ -18,7 +22,7 @@ public class DropTable implements DBChange {
     public Table getTable() {
         return table;
     }
-
+    @XmlElement
     public void setTable(Table table) {
         this.table = table;
     }
@@ -26,7 +30,7 @@ public class DropTable implements DBChange {
     public boolean isIfExists() {
         return ifExists;
     }
-
+    @XmlElement
     public void setIfExists(boolean ifExists) {
         this.ifExists = ifExists;
     }

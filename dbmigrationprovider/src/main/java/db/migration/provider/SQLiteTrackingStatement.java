@@ -3,7 +3,6 @@ package db.migration.provider;
 import java.sql.Statement;
 
 import db.migration.service.DBChangeTracker;
-import db.migration.model.modification.create.CreateTable;
 import db.migration.service.SQLParserException;
 import db.migration.service.SQLQueryParser;
 import db.migration.service.TrackingStatement;
@@ -11,8 +10,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class SQLiteTrackingStatement implements TrackingStatement {
     private Statement statement;

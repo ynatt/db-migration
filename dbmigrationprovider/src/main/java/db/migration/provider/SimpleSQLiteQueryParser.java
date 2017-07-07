@@ -2,7 +2,7 @@ package db.migration.provider;
 
 import db.migration.model.modification.DBChange;
 import db.migration.model.modification.ExecutableDBChange;
-import db.migration.provider.model.*;
+import db.migration.model.executable.*;
 import db.migration.service.SQLParserException;
 import db.migration.service.SQLQueryParser;
 

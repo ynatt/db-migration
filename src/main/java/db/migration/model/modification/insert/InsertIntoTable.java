@@ -4,8 +4,10 @@ import db.migration.model.Column;
 import db.migration.model.Table;
 import db.migration.model.modification.DBChange;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
-
+@XmlRootElement
 public class InsertIntoTable implements DBChange {
     private Table table;
     private List<Column> columns;
@@ -33,7 +35,7 @@ public class InsertIntoTable implements DBChange {
     public Table getTable() {
         return table;
     }
-
+    @XmlElement
     public void setTable(Table table) {
         this.table = table;
     }
@@ -41,7 +43,7 @@ public class InsertIntoTable implements DBChange {
     public List<String> getValues() {
         return values;
     }
-
+    @XmlElement
     public void setValues(List<String> values) {
         this.values = values;
     }
@@ -49,7 +51,7 @@ public class InsertIntoTable implements DBChange {
     public List<Column> getColumns() {
         return columns;
     }
-
+    @XmlElement
     public void setColumns(List<Column> columns) {
         this.columns = columns;
     }

@@ -1,10 +1,12 @@
 package db.migration.model;
 
-import db.migration.model.modification.create.IndexedColumn;
+import db.migration.model.modification.create.table.IndexedColumn;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
-
+@XmlRootElement
 public class Index extends DBObject implements MultiName {
     private IndexName indexName;
     private String indexType;
@@ -32,7 +34,7 @@ public class Index extends DBObject implements MultiName {
     public IndexName getIndexName() {
         return indexName;
     }
-
+    @XmlElement
     public void setIndexName(IndexName indexName) {
         this.indexName = indexName;
     }
@@ -40,7 +42,7 @@ public class Index extends DBObject implements MultiName {
     public String getIndexType() {
         return indexType;
     }
-
+    @XmlElement
     public void setIndexType(String indexType) {
         this.indexType = indexType;
     }
@@ -48,7 +50,7 @@ public class Index extends DBObject implements MultiName {
     public List<IndexedColumn> getIndexedColumns() {
         return indexedColumns;
     }
-
+    @XmlElement
     public void setIndexedColumns(List<IndexedColumn> indexedColumns) {
         this.indexedColumns = indexedColumns;
     }

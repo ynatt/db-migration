@@ -3,6 +3,10 @@ package db.migration.model.modification.delete;
 import db.migration.model.Table;
 import db.migration.model.modification.DBChange;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class DeleteFromTable implements DBChange {
     private Table table;
     private String whereExpression;
@@ -22,7 +26,7 @@ public class DeleteFromTable implements DBChange {
     public Table getTable() {
         return table;
     }
-
+    @XmlElement
     public void setTable(Table table) {
         this.table = table;
     }
@@ -30,7 +34,7 @@ public class DeleteFromTable implements DBChange {
     public String getWhereExspression() {
         return whereExpression;
     }
-
+    @XmlElement
     public void setWhereExspression(String whereExpression) {
         this.whereExpression = whereExpression;
     }

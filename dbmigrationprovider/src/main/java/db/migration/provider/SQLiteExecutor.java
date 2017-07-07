@@ -3,25 +3,39 @@ package db.migration.provider;
 import db.migration.model.Column;
 import db.migration.model.modification.DBChange;
 import db.migration.model.modification.ExecutableDBChange;
-import db.migration.model.modification.alter.AddColumn;
-import db.migration.model.modification.alter.AlterTable;
-import db.migration.model.modification.alter.RenameTo;
-import db.migration.model.modification.create.*;
+import db.migration.model.modification.alter.table.AddColumn;
+import db.migration.model.modification.alter.table.AlterTable;
+import db.migration.model.modification.alter.table.RenameTo;
+import db.migration.model.modification.create.index.CreateIndex;
+import db.migration.model.modification.create.table.ColumnDefinition;
+import db.migration.model.modification.create.table.CreateTable;
+import db.migration.model.modification.create.table.IndexedColumn;
+import db.migration.model.modification.create.table.TableConstraint;
 import db.migration.model.modification.drop.DropIndex;
 import db.migration.model.modification.drop.DropTable;
 import db.migration.model.modification.insert.InsertIntoTable;
-import db.migration.provider.model.*;
+import db.migration.model.executable.*;
 import db.migration.service.DBExecutor;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.sql.Connection;
 import java.util.Iterator;
 import java.util.List;
-
+@XmlRootElement
 public class SQLiteExecutor implements DBExecutor {
+    @XmlTransient
     private Connection connection;
+
+    public SQLiteExecutor() {
+    }
 
     public SQLiteExecutor(Connection connection){
         this.connection=connection;
+    }
+
+    public void setConnection(Connection connection) {
+        this.connection = connection;
     }
 
     @Override
@@ -86,7 +100,7 @@ public class SQLiteExecutor implements DBExecutor {
                 sql.append(", ");
             }
         }
-        if(createTable.getTableConstraints()!=null & !createTable.getTableConstraints().isEmpty()){
+        if(createTable.getTableConstraints()!=null && !createTable.getTableConstraints().isEmpty()){
             sql.append(" , ");
             TableConstraint tableConstraint;
             for(Iterator<TableConstraint> iterator = createTable.getTableConstraints().iterator(); iterator.hasNext();){
@@ -186,6 +200,7 @@ public class SQLiteExecutor implements DBExecutor {
         return sql.toString();
     }
 
+    @XmlTransient
     @Override
     public Connection getConnection() {
         return connection;

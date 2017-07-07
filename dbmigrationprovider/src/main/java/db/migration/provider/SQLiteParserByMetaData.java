@@ -3,13 +3,15 @@ package db.migration.provider;
 import db.migration.model.Column;
 import db.migration.model.Table;
 import db.migration.model.modification.DBChange;
-import db.migration.model.modification.create.*;
+import db.migration.model.modification.create.table.enums.ConstraintType;
+import db.migration.model.modification.create.table.ColumnDefinition;
+import db.migration.model.modification.create.table.CreateTable;
+import db.migration.model.modification.create.table.IndexedConstraint;
+import db.migration.model.modification.create.table.TableConstraint;
 import db.migration.service.SQLParserException;
 import db.migration.service.SQLQueryParser;
 import org.sqlite.SQLiteDataSource;
-import org.sqlite.core.CoreDatabaseMetaData;
 
-import javax.activation.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

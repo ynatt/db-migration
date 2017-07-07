@@ -2,13 +2,17 @@ package db.migration.provider;
 
 import db.migration.model.modification.DBChange;
 import db.migration.model.modification.ExecutableDBChange;
-import db.migration.model.modification.alter.AlterTable;
-import db.migration.model.modification.create.ColumnDefinition;
-import db.migration.model.modification.create.CreateIndex;
-import db.migration.model.modification.create.CreateTable;
-import db.migration.model.modification.drop.DropIndex;
-import db.migration.model.modification.drop.DropTable;
+import db.migration.model.modification.create.table.CreateTable;
+import db.migration.model.modification.create.table.ForeignKeyConstraint;
+import db.migration.model.modification.create.table.IndexedConstraint;
+import db.migration.model.modification.create.table.TableConstraint;
 import db.migration.service.SQLParserException;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.PropertyException;
+import java.io.File;
 
 public class SQLParseTest {
     public static void main(String[] args) {
@@ -16,7 +20,7 @@ public class SQLParseTest {
                 ", name text not null default 'anon'" +
                 ", account integer not null unique" +
                 ", constraint \"loop\" foreign key (account) references accounts (id) on delete cascade " +
-                "not deferrable, primary key (id,name) on conflict rollback, unique(name))";
+                "not deferrable,constraint \"ad\" primary key (id,name) on conflict rollback, unique(name))";
         String dropTableSql = "drop table if exists schwd.inwdx";
         String createIndexSql = "create unique index if not exists sdd.asd on asd.fa (pop asc, asq desc)";
         String dropIndex = "Drop index if exists daw.awd";
@@ -27,11 +31,25 @@ public class SQLParseTest {
         String update = "Update asda.ad set id = 1 where name = \"\"";
         SQLiteQueryParserManager parserManager = new SQLiteQueryParserManager();
         try {
-            DBChange dbChange = parserManager.parseSQLQuery(update);
+            DBChange dbChange = parserManager.parseSQLQuery(createTableSql);
+            JAXBContext context = JAXBContext.newInstance(CreateTable.class,
+                    TableConstraint.class,
+                    IndexedConstraint.class,
+                    ForeignKeyConstraint.class);
+            Marshaller marshaller = context.createMarshaller();
+            // устанавливаем флаг для читабельного вывода XML в JAXB
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            //JAXB.marshal(dropTable,new File(filePath));
+            // маршаллинг объекта в файл
+            marshaller.marshal(dbChange, new File("createTable.xml"));
             SQLiteExecutor sqLiteExecutor = new SQLiteExecutor(null);
             ExecutableDBChange executableCreateTable = sqLiteExecutor.makeExecutable(dbChange);
             System.out.println(executableCreateTable.getQuery());
         } catch (SQLParserException e) {
+            e.printStackTrace();
+        } catch (PropertyException e) {
+            e.printStackTrace();
+        } catch (JAXBException e) {
             e.printStackTrace();
         }
     }
