@@ -1,5 +1,6 @@
 package db.migration.service;
 
+import db.migration.model.executable.*;
 import db.migration.model.modification.DBChange;
 import db.migration.model.modification.alter.table.AddColumn;
 import db.migration.model.modification.alter.table.AlterTable;
@@ -10,8 +11,6 @@ import db.migration.model.modification.delete.DeleteFromTable;
 import db.migration.model.modification.drop.DropIndex;
 import db.migration.model.modification.drop.DropTable;
 import db.migration.model.modification.insert.InsertIntoTable;
-import db.migration.model.executable.ExecutableDeleteFromTable;
-import db.migration.model.executable.ExecutableUpdateTable;
 
 import javax.xml.bind.*;
 import javax.xml.bind.annotation.*;
@@ -20,21 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 @XmlRootElement(name="DBState")
 public class DBState implements DBChangeExportImport {
-    @XmlAttribute
     private String stateTitle;
-    @XmlTransient
     private DBExecutor executor;
-    @XmlElements({
-            @XmlElement(name = "CreateTable",type=CreateTable.class),
-            @XmlElement(name = "InsertIntoTable",type=InsertIntoTable.class),
-            @XmlElement(name = "ExecutableUpdateTable",type=ExecutableUpdateTable.class),
-            @XmlElement(name = "ExecutableDeleteFromTable",type=ExecutableDeleteFromTable.class),
-            @XmlElement(name = "DropTable",type=DropTable.class),
-            @XmlElement(name = "DropIndex",type=DropIndex.class),
-            @XmlElement(name = "DeleteFromTable",type=DeleteFromTable.class),
-            @XmlElement(name = "AlterTable",type=AlterTable.class),
-            @XmlElement(name = "CreateIndex",type=CreateIndex.class)}
-    )
     private List<DBChange> changes;
 
     public DBState() {
@@ -56,11 +42,11 @@ public class DBState implements DBChangeExportImport {
         this.executor=executor;
         this.changes = changes;
     }
-    @XmlTransient
+
     public DBExecutor getExecutor() {
         return executor;
     }
-
+    @XmlTransient
     public void setExecutor(DBExecutor executor) {
         this.executor = executor;
     }
@@ -72,11 +58,25 @@ public class DBState implements DBChangeExportImport {
     public List<DBChange> getChanges(){
         return changes;
     }
-
+    @XmlElements({
+            @XmlElement(name = "CreateTable",type=CreateTable.class),
+            @XmlElement(name = "InsertIntoTable",type=InsertIntoTable.class),
+            @XmlElement(name = "ExecutableUpdateTable",type=ExecutableUpdateTable.class),
+            @XmlElement(name = "ExecutableDeleteFromTable",type=ExecutableDeleteFromTable.class),
+            @XmlElement(name = "ExecutableAlterTable",type=ExecutableAlterTable.class),
+            @XmlElement(name = "ExecutableCreateIndex",type=ExecutableCreateIndex.class),
+            @XmlElement(name = "ExecutableDropTable",type=ExecutableDropTable.class),
+            @XmlElement(name = "ExecutableDropIndex",type=ExecutableDropIndex.class),
+            @XmlElement(name = "ExecutableUpdateTable",type=ExecutableUpdateTable.class),
+            @XmlElement(name = "DropTable",type=DropTable.class),
+            @XmlElement(name = "DropIndex",type=DropIndex.class),
+            @XmlElement(name = "AlterTable",type=AlterTable.class),
+            @XmlElement(name = "CreateIndex",type=CreateIndex.class)}
+    )
     public void setChanges(List<DBChange> changes) {
         this.changes = changes;
     }
-
+    @XmlAttribute
     public void setStateTitle(String stateTitle) {
         this.stateTitle = stateTitle;
     }
@@ -104,7 +104,7 @@ public class DBState implements DBChangeExportImport {
         }
     }
 
-    public static void convertObjectToXml(DBState state, String filePath) {
+    private static void convertObjectToXml(DBState state, String filePath) {
         try {
             JAXBContext context = JAXBContext.newInstance(DBState.class);
             Marshaller marshaller = context.createMarshaller();
@@ -115,7 +115,7 @@ public class DBState implements DBChangeExportImport {
         }
     }
 
-    public static DBState convertXMLToDBState(String filePath){
+    private static DBState convertXMLToDBState(String filePath){
         try {
             JAXBContext context = JAXBContext.newInstance(DBState.class);
             Unmarshaller unmarshaller = context.createUnmarshaller();

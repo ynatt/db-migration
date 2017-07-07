@@ -1,6 +1,9 @@
 package db.migration.model;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement
 public class Table extends DBObject implements MultiName {
     private String schemaName;
     private String tableName;
@@ -21,11 +24,11 @@ public class Table extends DBObject implements MultiName {
     public String getTableName() {
         return tableName;
     }
-
+    @XmlAttribute
     public void setTableName(String tableName) {
         this.tableName = tableName;
     }
-
+    @XmlAttribute
     public String getSchemaName() {
         return schemaName;
     }

@@ -1,5 +1,6 @@
 package db.migration.model.modification.create.table;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,7 @@ public class ColumnDefinition {
     public String getColumnName() {
         return columnName;
     }
-    @XmlElement
+    @XmlAttribute
     public void setColumnName(String columnName) {
         this.columnName = columnName;
     }
@@ -29,7 +30,7 @@ public class ColumnDefinition {
     public String getColumnDataType() {
         return columnDataType;
     }
-    @XmlElement
+    @XmlAttribute
     public void setColumnDataType(String columnDataType) {
         this.columnDataType = columnDataType;
     }

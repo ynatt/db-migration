@@ -3,6 +3,7 @@ package db.migration.model.modification.drop;
 import db.migration.model.IndexName;
 import db.migration.model.modification.DBChange;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -29,7 +30,7 @@ public class DropIndex implements DBChange {
     public boolean isIfExists() {
         return ifExists;
     }
-    @XmlElement
+    @XmlAttribute
     public void setIfExists(boolean ifExists) {
         this.ifExists = ifExists;
     }

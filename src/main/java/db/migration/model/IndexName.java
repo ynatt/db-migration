@@ -1,5 +1,7 @@
 package db.migration.model;
 
+import javax.xml.bind.annotation.XmlAttribute;
+
 public class IndexName implements MultiName{
     private String schemaName;
     private String indexName;
@@ -19,7 +21,7 @@ public class IndexName implements MultiName{
     public String getSchemaName() {
         return schemaName;
     }
-
+    @XmlAttribute
     public void setSchemaName(String schemaName) {
         this.schemaName = schemaName;
     }
@@ -27,7 +29,7 @@ public class IndexName implements MultiName{
     public String getIndexName() {
         return indexName;
     }
-
+    @XmlAttribute
     public void setIndexName(String indexName) {
         this.indexName = indexName;
     }

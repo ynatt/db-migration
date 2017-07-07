@@ -32,7 +32,7 @@ public class CreateTable implements DBChange {
     public boolean isIfNotExists() {
         return ifNotExists;
     }
-    @XmlElement
+    @XmlAttribute
     public void setIfNotExists(boolean ifNotExists) {
         this.ifNotExists = ifNotExists;
     }

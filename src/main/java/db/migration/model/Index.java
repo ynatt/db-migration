@@ -2,6 +2,7 @@ package db.migration.model;
 
 import db.migration.model.modification.create.table.IndexedColumn;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ public class Index extends DBObject implements MultiName {
     public String getIndexType() {
         return indexType;
     }
-    @XmlElement
+    @XmlAttribute
     public void setIndexType(String indexType) {
         this.indexType = indexType;
     }

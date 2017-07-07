@@ -32,9 +32,10 @@ public class TrackingTest {
             statement.execute("delete from user1 where id = 1");
             statement.execute("drop index if exists sd");
             statement.executeUpdate("create index sd on user2 (name)");
-            DBState.convertObjectToXml(state,"state.xml");
-            DBState dbState = DBState.convertXMLToDBState("state.xml");
-            if(dbState!=null){
+            state.exportChanges("state.xml");
+            DBState dbState = new DBState("123",new SQLiteExecutor());
+            dbState.importChanges("state.xml");
+            if(dbState.getChanges()!=null){
                 List<DBChange> dbChangeList = dbState.getChanges();
                 SQLiteExecutor executor = new SQLiteExecutor();
                 for(DBChange change : dbChangeList){

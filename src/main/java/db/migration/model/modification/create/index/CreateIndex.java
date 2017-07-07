@@ -4,6 +4,7 @@ import db.migration.model.Index;
 import db.migration.model.Table;
 import db.migration.model.modification.DBChange;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
@@ -36,7 +37,7 @@ public class CreateIndex implements DBChange {
     public boolean isIfNotExists() {
         return ifNotExists;
     }
-    @XmlElement
+    @XmlAttribute
     public void setIfNotExists(boolean ifNotExists) {
         this.ifNotExists = ifNotExists;
     }
@@ -44,7 +45,7 @@ public class CreateIndex implements DBChange {
     public boolean isUnique() {
         return isUnique;
     }
-    @XmlElement
+    @XmlAttribute
     public void setUnique(boolean unique) {
         isUnique = unique;
     }
