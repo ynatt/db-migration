@@ -2,12 +2,9 @@ package db.migration.service;
 
 import db.migration.model.executable.*;
 import db.migration.model.modification.DBChange;
-import db.migration.model.modification.alter.table.AddColumn;
 import db.migration.model.modification.alter.table.AlterTable;
-import db.migration.model.modification.alter.table.RenameTo;
 import db.migration.model.modification.create.index.CreateIndex;
 import db.migration.model.modification.create.table.CreateTable;
-import db.migration.model.modification.delete.DeleteFromTable;
 import db.migration.model.modification.drop.DropIndex;
 import db.migration.model.modification.drop.DropTable;
 import db.migration.model.modification.insert.InsertIntoTable;

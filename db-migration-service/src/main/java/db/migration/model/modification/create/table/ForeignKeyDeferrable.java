@@ -3,7 +3,6 @@ package db.migration.model.modification.create.table;
 import db.migration.model.modification.create.table.enums.DeferrableClause;
 
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement

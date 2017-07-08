@@ -6,7 +6,6 @@ import db.migration.model.modification.create.table.enums.ConstraintType;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
