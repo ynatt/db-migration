@@ -1,0 +1,598 @@
+options {
+  STATIC = false;
+  IGNORE_CASE=true;
+}
+
+PARSER_BEGIN(CCSQLiteQueryParser)
+
+package javacc.sqlitequeryparser;
+
+import db.migration.model.*;
+import db.migration.model.modification.*;
+import db.migration.model.modification.create.*;
+import db.migration.model.modification.alter.*;
+import db.migration.model.modification.drop.*;
+import db.migration.model.modification.insert.*;
+import java.util.ArrayList;
+import java.util.List;
+
+
+
+public class CCSQLiteQueryParser{
+	List<ParseException> parseErrors = new ArrayList<ParseException>();
+
+    public DBChange analiseQuery() throws ParseException, TokenMgrError{
+        return analise();
+    }
+	
+	public List<ParseException> getParseErrors() {
+        return parseErrors;
+	}
+}
+
+PARSER_END(CCSQLiteQueryParser)
+
+SKIP:
+{
+    "\n" | "\r" | "\r\n" | "\\" | "\t" | " "
+}
+TOKEN :
+{
+	<#DIGIT:["0"-"9"]>
+   |<INTEGER:(<DIGIT>)+>
+   |<#SGN:("+"|"-")?>
+   |<REAL: <SGN>((<INTEGER>)? "." <INTEGER> ( ["e","E"] (<SGN>)? <INTEGER>)?
+            |
+            <SGN><INTEGER> "." (["e","E"] (<SGN>)? <INTEGER>)?
+            |
+            <SGN><INTEGER> ["e","E"] (<SGN>)? <INTEGER>)>
+   |<TEXT:("\""(~["\""])*"\""|"'"(~["'"])*"'")>
+   |<BLOB:"x'"(<HEX>)*"'">
+   |<#HEX:(<INTEGER>|["A"-"F","a"-"f"])>
+}
+
+TOKEN [IGNORE_CASE]:
+{
+    <T_CREATE:"CREATE">
+   |<T_TABLE:"TABLE">
+   |<T_DROP:"DROP">
+   |<T_OPEN_BRACKET :"(">
+   |<T_CLOSE_BRACKET :")">
+   |<T_COMMA :",">
+   |<T_PRIMARY:"PRIMARY">
+   |<T_KEY:"KEY">
+   |<T_AUTOINCREMENT :"AUTOINCREMENT">
+   |<T_NOT :"NOT">
+   |<T_NULL :"NULL">
+   |<T_IF :"IF">
+   |<T_EXISTS :"EXISTS">
+   |<T_UNIQUE :"UNIQUE">
+   |<T_INDEX:"INDEX">
+   |<T_DEFAULT :"DEFAULT">
+   |<T_APOSTR :("'"|"\""|"["|"]"|"`")>
+   |<T_CONSTRAINT:"CONSTRAINT">
+   |<T_ON:"ON">
+   |<T_CONFLICT:"CONFLICT">
+   |<T_ROLLBACK:"ROLLBACK">
+   |<T_ABORT:"ABORT">
+   |<T_FAIL:"FAIL">
+   |<T_IGNORE:"IGNORE">
+   |<T_REPLACE:"REPLACE">
+   |<T_FOREIGN:"FOREIGN">
+   |<T_REFERENCES:"REFERENCES">
+   |<T_DELETE:"DELETE">
+   |<T_UPDATE:"UPDATE">
+   |<T_SET:"SET">
+   |<T_CASCADE:"CASCADE">
+   |<T_RESTRICT:"RESTRICT">
+   |<T_NO:"NO">
+   |<T_ACTION:"ACTION">
+   |<T_DEFERRABLE:"DEFERRABLE">
+   |<T_INITIALLY:"INITIALLY">
+   |<T_DEFERRED:"DEFERRED">
+   |<T_IMMEDIATE:"IMMEDIATE">
+   |<T_ASC:"ASC">
+   |<T_DESC:"DESC">
+   |<T_ALTER:"ALTER">
+   |<T_ADD:"ADD">
+   |<T_COLUMN:"COLUMN">
+   |<T_RENAME:"RENAME">
+   |<T_TO:"TO">
+   |<T_INSERT:"INSERT">
+   |<T_INTO:"INTO">
+   |<T_VALUES:"VALUES">
+}
+
+TOKEN [IGNORE_CASE]:
+{
+	<T_IDENTIFIER: <LETTER>(<LETTER>|<NUMBER>)*>
+   |<#LETTER:["$","A"-"Z","_","a"-"z"]>
+   |<#NUMBER:["0"-"9"]>
+   |<T_QUOTED_IDENTIFIER: ("[" (~["\n","\r","]","["])* "]") >
+}
+
+DBChange analise():
+{
+	DBChange dbChange = null;
+}
+{	try {
+			(	LOOKAHEAD(2)
+				dbChange = createTable()
+				|	 
+				LOOKAHEAD(2)
+				dbChange = drop()
+				|
+				dbChange = createIndex()
+				|
+				dbChange = alterTable()
+				|
+				dbChange = insertIntoTable()
+			)
+		} catch(ParseException e){
+			parseErrors.add(e);
+			throw e;
+		}
+		{
+			return dbChange;
+		}
+}
+
+String getObjectName():
+{
+	Token token = null;
+}
+{
+	(
+		token = <T_IDENTIFIER>
+		|token = <T_QUOTED_IDENTIFIER>
+		|token = <TEXT>
+	)
+	{
+		return token.image;
+	}
+}
+
+CreateTable createTable():
+{
+    CreateTable createTable = new CreateTable();
+    Table table = null;
+    List<ColumnDefinition> columnDefinitions = new ArrayList<ColumnDefinition>();
+    String columnName = null;
+    String columnDataType = null;
+    ColumnDefinition columnDef = null;
+    List<String> columnSpecs = new ArrayList<String>();
+	TableConstraint tableConstraint = null;
+	String constraintName = null;
+	List<Column> columns = null;
+	ConflictDecision conflictDecision = null;
+	ForeignKeyClause foreignKeyClause = null;
+}
+{
+    <T_CREATE> <T_TABLE>
+	[ <T_IF> <T_NOT> <T_EXISTS> { createTable.setIfNotExists(true);} ] 
+	table = Table()
+	<T_OPEN_BRACKET>
+	columnDefinitions = ColumnDefinitions()
+	( LOOKAHEAD(4)
+		<T_COMMA>
+		[<T_CONSTRAINT> constraintName = getObjectName()]
+		(
+			<T_PRIMARY> <T_KEY> columns = getColumns() [conflictDecision = getConflictDecision()]
+			{
+				createTable.addTableConstraint(new IndexedConstraint(constraintName,ConstraintType.PRIMARY_KEY,columns,conflictDecision));
+			}
+			| <T_UNIQUE> columns = getColumns() [conflictDecision = getConflictDecision()]
+			{
+				createTable.addTableConstraint(new IndexedConstraint(constraintName,ConstraintType.UNIQUE,columns,conflictDecision));
+			}
+			| <T_FOREIGN> <T_KEY> columns = getColumns() foreignKeyClause = getForeignKeyClause()
+			{
+				createTable.addTableConstraint(new ForeignKeyConstraint(constraintName,columns,foreignKeyClause));
+			}
+		)
+		{
+			constraintName = null;
+		}
+	)*
+	<T_CLOSE_BRACKET>
+	[";"]
+	<EOF>
+	{
+		createTable.setTable(table);
+		createTable.setColumnDefinitions(columnDefinitions);
+		return createTable;
+	}
+	
+}
+
+Table Table():
+{
+    String schemaName = null;
+    String tableName = null;
+
+}
+{	
+	(
+		LOOKAHEAD(3) schemaName=getObjectName() "." tableName=getObjectName()
+		|tableName = getObjectName()
+	)
+    {
+        Table table = new Table(schemaName,tableName);
+        return table;
+    }
+}
+IndexName IndexName():
+{
+	String schemaName = null;
+	String indexStringName = null;
+	IndexName indexName = null;
+}
+{
+	(LOOKAHEAD(3) schemaName=getObjectName() "." indexStringName=getObjectName()
+    |indexStringName = getObjectName())
+    {
+        indexName = new IndexName(schemaName,indexStringName);
+        return indexName;
+    }
+}
+
+List<ColumnDefinition> ColumnDefinitions():
+{
+    List<ColumnDefinition> columnDefinitions = new ArrayList<ColumnDefinition>();
+    ColumnDefinition columnDef = null;
+    String columnName = null;
+    String columnDataType = null;
+    String spec = null;
+    List<String> columnSpecs = new ArrayList<String>();
+}
+{
+    (columnName = getObjectName() columnDataType = getObjectName()
+	
+    ( spec = ColumnSpec() {columnSpecs.add(spec);} )*
+    {
+        columnDef = new ColumnDefinition(columnName,columnDataType);
+        columnDef.setColumnSpecs(new ArrayList<String>(columnSpecs));
+		columnSpecs.clear();
+        columnDefinitions.add(columnDef);
+    }
+	)
+    ( LOOKAHEAD(2)
+        <T_COMMA>
+        columnName = getObjectName() columnDataType = getObjectName()
+        ( spec = ColumnSpec()
+            {
+                columnSpecs.add(spec);
+            }
+		)*
+        {
+            columnDef = new ColumnDefinition(columnName,columnDataType);
+            columnDef.setColumnSpecs(new ArrayList<String>(columnSpecs));
+			columnSpecs.clear();
+            columnDefinitions.add(columnDef);
+        }
+    )*
+    {
+        return columnDefinitions;
+    }
+}
+
+String ColumnSpec():
+{
+    String spec = null;
+	String defaultValue = null;
+	boolean isAutoincrement = false;
+}
+{
+    <T_PRIMARY> <T_KEY> [<T_AUTOINCREMENT> {isAutoincrement =true;} ]
+	{	
+		spec = "PRIMARY KEY";
+		if(isAutoincrement){
+			spec+=" AUTOINCREMENT";
+		}
+		return spec;
+	}
+   |LOOKAHEAD(2) <T_NOT> <T_NULL> { return "NOT NULL"; }
+   |<T_UNIQUE> { return "UNIQUE"; }
+   |LOOKAHEAD(2) <T_DEFAULT> defaultValue = getObjectName() { return "DEFAULT "+defaultValue; }
+}
+
+List<Column> getColumns():
+{
+	ArrayList<Column> columns = null;
+	String columnName = null;
+}
+{
+	(
+		<T_OPEN_BRACKET>
+		columnName = getObjectName() 
+		{ 
+			columns = new ArrayList<Column>();
+			columns.add(new Column(columnName));
+		}
+		(
+			<T_COMMA>
+			columnName = getObjectName() 
+			{ 
+				columns.add(new Column(columnName));
+			}
+		)*
+		<T_CLOSE_BRACKET>
+	)
+	{ return columns;}
+}
+
+ConflictDecision getConflictDecision():
+{
+	
+}
+{
+	<T_ON> <T_CONFLICT>
+		(
+			<T_ROLLBACK> { return ConflictDecision.ROLLBACK;}
+			|<T_ABORT> { return ConflictDecision.ABORT;}
+			|<T_FAIL> { return ConflictDecision.FAIL;}
+			|<T_IGNORE> { return ConflictDecision.IGNORE;}
+			|<T_REPLACE> { return ConflictDecision.REPLACE;}
+		)
+}
+
+ForeignKeyClause getForeignKeyClause():
+{
+	ForeignKeyClause foreignKeyClause = null;
+	Table foreignTable = null;
+	List<Column> columns = null;
+	OnDeleteClause onDeleteClause = null;
+    OnUpdateClause onUpdateClause = null;
+    ForeignKeyDeferrable foreignKeyDeferrable = null;
+}
+{
+	(
+		<T_REFERENCES> foreignTable = Table() [ columns = getColumns()]
+		[LOOKAHEAD(2) onDeleteClause = getOnDeleteClause() ]
+		[LOOKAHEAD(2) onUpdateClause = getOnUpdateClause() ]
+		[ foreignKeyDeferrable = getForeignKeyDeferrable() ]
+	)
+	{
+		foreignKeyClause = new ForeignKeyClause(foreignTable);
+		foreignKeyClause.setColumns(columns);
+		foreignKeyClause.setOnDeleteClause(onDeleteClause);
+		foreignKeyClause.setOnUpdateClause(onUpdateClause);
+		foreignKeyClause.setForeignKeyDeferrable(foreignKeyDeferrable);
+		return foreignKeyClause;
+	}
+}
+
+OnDeleteClause getOnDeleteClause():
+{
+	ClauseDecision clauseDecision = null;
+}
+{
+	(
+		<T_ON> <T_DELETE> clauseDecision = getClauseDecision()
+	)
+	{
+		return new OnDeleteClause(clauseDecision); 
+	}
+}
+
+OnUpdateClause getOnUpdateClause():
+{
+	ClauseDecision clauseDecision = null;
+	
+}
+{
+	(
+		<T_ON> <T_UPDATE> clauseDecision = getClauseDecision()
+	)
+	{
+		
+		return new OnUpdateClause(clauseDecision) ; 
+	}
+}
+
+ClauseDecision getClauseDecision():
+{
+	
+}
+{
+	( LOOKAHEAD(2)
+		<T_SET> <T_NULL> { return ClauseDecision.SET_NULL;}
+		|<T_SET> <T_DEFAULT> { return ClauseDecision.SET_DEFAULT;}
+		|<T_CASCADE> { return ClauseDecision.CASCADE;}
+		|<T_RESTRICT> { return ClauseDecision.RESTRICT;}
+		|<T_NO> <T_ACTION> { return ClauseDecision.NO_ACTION;}
+	)
+}
+
+ForeignKeyDeferrable getForeignKeyDeferrable():
+{
+	
+}
+{
+	(
+		<T_NOT> <T_DEFERRABLE> { return new ForeignKeyDeferrable(DeferrableClause.NOT_DEFERRABLE);}
+		( LOOKAHEAD(3)
+		<T_DEFERRABLE> <T_INITIALLY> <T_DEFERRED> { return new ForeignKeyDeferrable(DeferrableClause.INITIALLY_DEFERRED); }
+		|<T_DEFERRABLE> <T_INITIALLY> <T_IMMEDIATE> { return new ForeignKeyDeferrable(DeferrableClause.INITIALLY_IMMEDIATE);}
+		)
+	)
+}
+
+DBChange drop():
+{
+	Table table = null;
+	IndexName indexName = null;
+}
+{
+	(
+		<T_DROP>
+		(
+			<T_TABLE> {DropTable dropTable = new DropTable();} [<T_IF> <T_EXISTS> { dropTable.setIfExists(true);}]
+			table = Table()
+			[";"]
+			[<EOF>]
+			{ 
+				dropTable.setTable(table);
+				return dropTable;
+			}
+			|<T_INDEX> { DropIndex dropIndex = new DropIndex();} [<T_IF> <T_EXISTS> { dropIndex.setIfExists(true);}]
+			indexName = IndexName() {dropIndex.setIndexName(indexName);}
+			[";"]
+			[<EOF>]
+			{return dropIndex;}	
+		)
+		
+	)
+}
+
+DBChange createIndex():
+{
+	CreateIndex createIndex = new CreateIndex();
+	Table table = new Table();
+	Index index = new Index();
+	IndexName indexName = null;
+	List<IndexedColumn> indexedColumns = new ArrayList<IndexedColumn>();
+}
+{
+	(
+		<T_CREATE> [<T_UNIQUE> { createIndex.setUnique(true);}] <T_INDEX> 
+		[ <T_IF> <T_NOT> <T_EXISTS> { createIndex.setIfNotExists(true);}]
+		indexName = IndexName() { index.setIndexName(indexName);}
+		<T_ON> table = Table() { createIndex.setTable(table);}
+		indexedColumns = getIndexedColumns() { index.setIndexedColumns(indexedColumns);}
+		[";"]
+		[<EOF>]
+	)
+	{
+		createIndex.setIndex(index);
+		return createIndex;
+	}
+}
+
+List<IndexedColumn> getIndexedColumns():
+{
+	IndexedColumn indexedColumn = null;
+	ArrayList<IndexedColumn> indexedColumns = new ArrayList<IndexedColumn>();
+	String columnName = null;
+}
+{
+	<T_OPEN_BRACKET>
+	(
+		[<T_COMMA>]
+		columnName = getObjectName() { indexedColumn = new IndexedColumn(new Column(columnName));}
+		[
+			<T_ASC> { indexedColumn.setOrder(Order.ASC);}
+		   |<T_DESC> { indexedColumn.setOrder(Order.ASC);}
+		]
+		{
+			indexedColumns.add(indexedColumn);
+		}
+	)+
+	<T_CLOSE_BRACKET>
+	{
+		return indexedColumns;
+	}
+}
+
+DBChange alterTable():
+{
+	Table table = null;
+	AbstractAlterType alterType = null;
+	Table newTable = null;
+	ColumnDefinition columnDefinition = null;
+	List<ColumnDefinition> column = null;
+}
+{
+	<T_ALTER> <T_TABLE> table = Table() 
+	(
+		<T_RENAME> <T_TO> newTable = Table() { return new AlterTable(table,new RenameTo(AlterTableType.RENAME,newTable));}
+       |<T_ADD> [ <T_COLUMN> ] column = ColumnDefinitions() 
+	   {
+			columnDefinition=column.get(0);
+			return new AlterTable(table,new AddColumn(AlterTableType.ADD,columnDefinition));
+	   }
+	)
+}
+
+DBChange insertIntoTable():
+{
+	Table table = null;
+	List<Column> columns = null;
+	List<String> values = new ArrayList<String>();
+	String value = null;
+	StringBuilder valuesBuilder = new StringBuilder();
+	boolean hasComma = false;
+}
+{
+	<T_INSERT> <T_INTO>
+	table = Table()
+	columns = getColumns()
+	<T_VALUES>
+	(	
+		(
+			[<T_COMMA> ]
+			<T_OPEN_BRACKET> {valuesBuilder.append(" ( ");}
+			value = getInsertValue()	
+		{ 		
+			hasComma=false;
+			valuesBuilder.append(value);
+		}
+			<T_CLOSE_BRACKET>{valuesBuilder.append(" )");}
+			{
+				values.add(valuesBuilder.toString());
+				valuesBuilder = new StringBuilder();
+			}
+		)
+	)+
+	[";"]
+	<EOF>	
+	{
+		return new InsertIntoTable(table,columns,values);
+	}
+}
+
+String getInsertValue():
+{
+	Token columnValue = null;
+	Token comma = null;
+	StringBuilder value = new StringBuilder();
+}
+{	
+	(
+		(
+			[comma = <T_COMMA>]
+			( 
+				columnValue = <INTEGER>
+				|
+				columnValue = <BLOB>
+				|
+				columnValue = <REAL>
+				|
+				columnValue = <TEXT>
+				|
+				columnValue = <T_NULL>
+			)
+			{
+			if(comma!=null){
+				value.append(" , ");
+			}
+			comma=null;
+			value.append(columnValue.image);
+		}
+		)+	
+	)
+	{
+		return value.toString();
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
