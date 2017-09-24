@@ -45,6 +45,7 @@ public class SQLiteExecutor implements DBExecutor {
 
     @Override
     public ExecutableDBChange makeExecutable(DBChange dbChange) {
+
         if(dbChange instanceof CreateTable){
             String sql = makeSQLQueryCreateTable((CreateTable) dbChange);
             return new ExecutableCreateTable(sql);
@@ -72,7 +73,6 @@ public class SQLiteExecutor implements DBExecutor {
         if(dbChange instanceof AbstractExecutableDBChange){
             return (AbstractExecutableDBChange) dbChange;
         }
-
         return null;
     }
 

@@ -15,6 +15,7 @@ public class CreateIndex implements DBChange {
     private Index index;
 
     public CreateIndex() {
+
     }
 
     public CreateIndex(Index index) {
@@ -22,8 +23,8 @@ public class CreateIndex implements DBChange {
     }
 
     public CreateIndex(Table table, Index index) {
+        this(index);
         this.table = table;
-        this.index = index;
     }
 
     public Table getTable() {
@@ -61,5 +62,25 @@ public class CreateIndex implements DBChange {
     @Override
     public String getChangeType() {
         return "CREATE INDEX";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CreateIndex)) return false;
+        CreateIndex that = (CreateIndex) o;
+        return ifNotExists == that.ifNotExists
+                && isUnique == that.isUnique
+                && (table != null ? table.equals(that.table) : that.table == null)
+                && (index != null ? index.equals(that.index) : that.index == null);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = table != null ? table.hashCode() : 0;
+        result = 31 * result + (ifNotExists ? 1 : 0);
+        result = 31 * result + (isUnique ? 1 : 0);
+        result = 31 * result + (index != null ? index.hashCode() : 0);
+        return result;
     }
 }

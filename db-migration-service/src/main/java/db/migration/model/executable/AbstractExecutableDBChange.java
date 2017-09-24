@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+
 @XmlRootElement
 public abstract class AbstractExecutableDBChange implements ExecutableDBChange{
     private String sql;
@@ -27,6 +28,7 @@ public abstract class AbstractExecutableDBChange implements ExecutableDBChange{
     public String getSql() {
         return sql;
     }
+
     @XmlElement
     public void setSql(String sql) {
         this.sql = sql;
@@ -45,5 +47,20 @@ public abstract class AbstractExecutableDBChange implements ExecutableDBChange{
             exception=e;
             return false;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AbstractExecutableDBChange)) return false;
+
+        AbstractExecutableDBChange that = (AbstractExecutableDBChange) o;
+
+        return sql != null ? sql.equals(that.sql) : that.sql == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return sql != null ? sql.hashCode() : 0;
     }
 }

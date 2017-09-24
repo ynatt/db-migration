@@ -16,7 +16,7 @@ public class DropColumn implements DBChange {
     }
 
     public DropColumn(Table table, Column column) {
-        this.table = table;
+        this(table);
         this.column = column;
     }
 

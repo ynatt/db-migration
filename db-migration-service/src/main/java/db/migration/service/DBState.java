@@ -12,6 +12,9 @@ import db.migration.model.modification.insert.InsertIntoTable;
 import javax.xml.bind.*;
 import javax.xml.bind.annotation.*;
 import java.io.File;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 @XmlRootElement(name="DBState")
@@ -21,22 +24,21 @@ public class DBState implements DBChangeExportImport {
     private List<DBChange> changes;
 
     public DBState() {
+        changes = new ArrayList<>();
     }
 
     public DBState(String title){
+        this();
         stateTitle=title;
-        changes = new ArrayList<>();
     }
 
     public DBState(String title,DBExecutor executor){
-        stateTitle=title;
+        this(title);
         this.executor=executor;
-        changes = new ArrayList<>();
     }
 
     public DBState(String title,DBExecutor executor, List<DBChange> changes){
-        stateTitle=title;
-        this.executor=executor;
+        this(title, executor);
         this.changes = changes;
     }
 
@@ -55,6 +57,7 @@ public class DBState implements DBChangeExportImport {
     public List<DBChange> getChanges(){
         return changes;
     }
+
     @XmlElements({
             @XmlElement(name = "CreateTable",type=CreateTable.class),
             @XmlElement(name = "InsertIntoTable",type=InsertIntoTable.class),
@@ -79,47 +82,70 @@ public class DBState implements DBChangeExportImport {
     }
 
     public void addChange(DBChange change){
-        changes.add(change);
+        if(change!=null) {
+            changes.add(change);
+        }
+    }
+
+    void applyChanges(){
+        for(DBChange change : changes){
+            if(change!=null) {
+                executor.execute(executor.makeExecutable(change));
+            }
+        }
     }
 
     void applyChanges(DBExecutor executor){
         for(DBChange change : changes){
-            executor.execute(executor.makeExecutable(change));
+            if(change!=null) {
+                executor.execute(executor.makeExecutable(change));
+            }
         }
     }
 
     @Override
-    public void exportChanges(String filePath) {
-        convertObjectToXml(this,filePath);
+    public void exportChanges(Writer writer) throws JAXBException {
+        convertObjectToXml(this,writer);
     }
 
     @Override
-    public void importChanges(String filePath) {
-        DBState newState = convertXMLToDBState(filePath);
+    public void importChanges(Reader reader) throws JAXBException {
+        DBState newState = convertXMLToDBState(reader);
         if(newState!=null) {
             this.setChanges(newState.getChanges());
         }
     }
 
-    private static void convertObjectToXml(DBState state, String filePath) {
-        try {
-            JAXBContext context = JAXBContext.newInstance(DBState.class);
-            Marshaller marshaller = context.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            marshaller.marshal(state, new File(filePath));
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        }
+    private static void convertObjectToXml(DBState state,Writer Writer) throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance(DBState.class);
+        Marshaller marshaller = context.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        marshaller.marshal(state,Writer);
     }
 
-    private static DBState convertXMLToDBState(String filePath){
-        try {
-            JAXBContext context = JAXBContext.newInstance(DBState.class);
-            Unmarshaller unmarshaller = context.createUnmarshaller();
-            return (DBState) unmarshaller.unmarshal(new File(filePath));
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        }
-        return null;
+    private static DBState convertXMLToDBState(Reader reader) throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance(DBState.class);
+        Unmarshaller unmarshaller = context.createUnmarshaller();
+        return (DBState) unmarshaller.unmarshal(reader);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DBState)) return false;
+
+        DBState dbState = (DBState) o;
+
+        return (stateTitle != null ? stateTitle.equals(dbState.stateTitle) : dbState.stateTitle == null)
+                && (executor != null ? executor.equals(dbState.executor) : dbState.executor == null)
+                && (changes != null ? changes.equals(dbState.changes) : dbState.changes == null);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = stateTitle != null ? stateTitle.hashCode() : 0;
+        result = 31 * result + (executor != null ? executor.hashCode() : 0);
+        result = 31 * result + (changes != null ? changes.hashCode() : 0);
+        return result;
     }
 }

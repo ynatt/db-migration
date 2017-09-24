@@ -28,4 +28,19 @@ public class OnDeleteClause {
     public String toString() {
         return "ON DELETE "+ clauseDecision;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof OnDeleteClause)) return false;
+
+        OnDeleteClause that = (OnDeleteClause) o;
+
+        return clauseDecision == that.clauseDecision;
+    }
+
+    @Override
+    public int hashCode() {
+        return clauseDecision != null ? clauseDecision.hashCode() : 0;
+    }
 }

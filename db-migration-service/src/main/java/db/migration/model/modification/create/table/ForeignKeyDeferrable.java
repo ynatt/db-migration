@@ -32,4 +32,17 @@ public class ForeignKeyDeferrable {
             return deferrableClause.toString();
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ForeignKeyDeferrable)) return false;
+        ForeignKeyDeferrable that = (ForeignKeyDeferrable) o;
+        return deferrableClause == that.deferrableClause;
+    }
+
+    @Override
+    public int hashCode() {
+        return deferrableClause != null ? deferrableClause.hashCode() : 0;
+    }
 }

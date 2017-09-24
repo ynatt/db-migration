@@ -9,10 +9,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 public abstract class AbstractAlterType {
     private AlterTableType alterTypeName;
 
-    public AbstractAlterType() {
+    protected AbstractAlterType() {
+
     }
 
-    AbstractAlterType(AlterTableType alterTypeName){
+    protected AbstractAlterType(AlterTableType alterTypeName){
         this.alterTypeName=alterTypeName;
     }
 
@@ -27,5 +28,18 @@ public abstract class AbstractAlterType {
     @Override
     public String toString() {
         return alterTypeName.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AbstractAlterType)) return false;
+        AbstractAlterType that = (AbstractAlterType) o;
+        return alterTypeName == that.alterTypeName;
+    }
+
+    @Override
+    public int hashCode() {
+        return alterTypeName != null ? alterTypeName.hashCode() : 0;
     }
 }

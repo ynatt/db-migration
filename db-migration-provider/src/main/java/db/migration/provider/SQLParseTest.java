@@ -6,6 +6,8 @@ import db.migration.model.modification.create.table.CreateTable;
 import db.migration.model.modification.create.table.ForeignKeyConstraint;
 import db.migration.model.modification.create.table.IndexedConstraint;
 import db.migration.model.modification.create.table.TableConstraint;
+import db.migration.model.modification.drop.DropTable;
+import db.migration.model.modification.insert.InsertIntoTable;
 import db.migration.service.SQLParserException;
 
 import javax.xml.bind.JAXBContext;
@@ -31,8 +33,10 @@ public class SQLParseTest {
         String update = "Update asda.ad set id = 1 where name = \"\"";
         SQLiteQueryParserManager parserManager = new SQLiteQueryParserManager();
         try {
-            DBChange dbChange = parserManager.parseSQLQuery(createTableSql);
+            DBChange dbChange = parserManager.parseSQLQuery(dropTableSql);
             JAXBContext context = JAXBContext.newInstance(CreateTable.class,
+                    InsertIntoTable.class,
+                    DropTable.class,
                     TableConstraint.class,
                     IndexedConstraint.class,
                     ForeignKeyConstraint.class);
@@ -45,11 +49,7 @@ public class SQLParseTest {
             SQLiteExecutor sqLiteExecutor = new SQLiteExecutor(null);
             ExecutableDBChange executableCreateTable = sqLiteExecutor.makeExecutable(dbChange);
             System.out.println(executableCreateTable.getQuery());
-        } catch (SQLParserException e) {
-            e.printStackTrace();
-        } catch (PropertyException e) {
-            e.printStackTrace();
-        } catch (JAXBException e) {
+        } catch (SQLParserException | JAXBException e) {
             e.printStackTrace();
         }
     }

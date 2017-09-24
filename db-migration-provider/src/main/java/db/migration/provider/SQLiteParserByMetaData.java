@@ -28,9 +28,7 @@ public class SQLiteParserByMetaData implements SQLQueryParser {
 
     @Override
     public DBChange parseSQLQuery(String sql) throws SQLParserException {
-        DBChange change = null;
-        change = new CreateTableParser().parseSQLQuery(sql);
-        return change;
+        return new CreateTableParser().parseSQLQuery(sql);
     }
 
     public static void main(String[] args) throws SQLParserException, SQLException {
@@ -55,7 +53,7 @@ public class SQLiteParserByMetaData implements SQLQueryParser {
         @Override
         public DBChange parseSQLQuery(String sql) throws SQLParserException {
             DBChange change = null;
-            Pattern createTablePattern = Pattern.compile("create table (?<ifNotExists>if not exists)? (?<tableName>(\\w|\\d)+)( |\\().+",Pattern.CASE_INSENSITIVE);
+            Pattern createTablePattern = Pattern.compile("create table (?<ifNotExists>if not exists)? (?<tableName>(\\w|\\d)+)([ (]).+",Pattern.CASE_INSENSITIVE);
             Matcher matcher = createTablePattern.matcher(sql);
             if(matcher.find()) {
                 String tableName = matcher.group("tableName");
@@ -116,7 +114,7 @@ public class SQLiteParserByMetaData implements SQLQueryParser {
                 }
                 return change;
             }else {
-                return change;
+                return null;
             }
         }
 

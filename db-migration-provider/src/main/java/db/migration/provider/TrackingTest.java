@@ -7,6 +7,10 @@ import db.migration.service.TrackingConnection;
 import db.migration.service.TrackingDataSource;
 import db.migration.service.TrackingStatement;
 
+import javax.xml.bind.JAXBException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -15,7 +19,7 @@ public class TrackingTest {
         TrackingDataSource ds = new SQLiteTrackingDataSource("jdbc:sqlite:sample.db");
         try {
             DBState state = new DBState("Test State");
-            TrackingConnection connection = ds.getTrackingConnection(state);
+            TrackingConnection connection = ds.getTrackingConnection();
             TrackingStatement statement = connection.createTrackingStatement(new SQLiteQueryParserManager());
             statement.executeUpdate("drop table if exists user");
             statement.executeUpdate("create table if not EXISTS user (id integer, name string)");
@@ -28,13 +32,13 @@ public class TrackingTest {
             statement.execute("insert into user (id,name) values(1,'ad'),(4,'dw')");
             statement.execute("update user set name = 'qwe' where id = 1");
             statement.execute("alter table user add column id2 integer default 'ad' ");
-//            statement.execute("alter table user rename to user");
+            statement.execute("alter table user rename to user1");
             statement.execute("delete from user1 where id = 1");
             statement.execute("drop index if exists sd");
             statement.executeUpdate("create index sd on user2 (name)");
-            state.exportChanges("state.xml");
+            state.exportChanges(new FileWriter("state.xml"));
             DBState dbState = new DBState("123",new SQLiteExecutor());
-            dbState.importChanges("state.xml");
+            dbState.importChanges(new FileReader("state.xml"));
             if(dbState.getChanges()!=null){
                 List<DBChange> dbChangeList = dbState.getChanges();
                 SQLiteExecutor executor = new SQLiteExecutor();
@@ -49,6 +53,10 @@ public class TrackingTest {
                 System.out.println("fufa");
             }
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

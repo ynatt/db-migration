@@ -18,8 +18,8 @@ public class Column extends DBObject implements MultiName{
     }
 
     public Column(Table table, String columnName) {
-        this.table = table;
-        this.columnName = columnName;
+        this(columnName);
+        this.table=table;
     }
 
     public Table getTable() {
@@ -51,5 +51,21 @@ public class Column extends DBObject implements MultiName{
             fullName+=columnName;
         }
         return fullName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Column)) return false;
+        Column column = (Column) o;
+        return (table != null ? table.equals(column.table) : column.table == null)
+                && (columnName != null ? columnName.equals(column.columnName) : column.columnName == null);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = table != null ? table.hashCode() : 0;
+        result = 31 * result + (columnName != null ? columnName.hashCode() : 0);
+        return result;
     }
 }

@@ -39,4 +39,20 @@ public class DropIndex implements DBChange {
     public String getChangeType() {
         return "DROP INDEX";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DropIndex)) return false;
+        DropIndex dropIndex = (DropIndex) o;
+        return ifExists == dropIndex.ifExists
+                && (indexName != null ? indexName.equals(dropIndex.indexName) : dropIndex.indexName == null);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (ifExists ? 1 : 0);
+        result = 31 * result + (indexName != null ? indexName.hashCode() : 0);
+        return result;
+    }
 }

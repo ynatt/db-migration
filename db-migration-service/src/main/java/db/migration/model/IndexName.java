@@ -7,6 +7,7 @@ public class IndexName implements MultiName{
     private String indexName;
 
     public IndexName() {
+
     }
 
     public IndexName(String indexName) {
@@ -14,8 +15,8 @@ public class IndexName implements MultiName{
     }
 
     public IndexName(String schemaName, String indexName) {
+        this(indexName);
         this.schemaName = schemaName;
-        this.indexName = indexName;
     }
 
     public String getSchemaName() {
@@ -47,5 +48,21 @@ public class IndexName implements MultiName{
             fullName+=indexName;
         }
         return fullName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof IndexName)) return false;
+        IndexName indexName1 = (IndexName) o;
+        return (schemaName != null ? schemaName.equals(indexName1.schemaName) : indexName1.schemaName == null)
+                && (indexName != null ? indexName.equals(indexName1.indexName) : indexName1.indexName == null);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = schemaName != null ? schemaName.hashCode() : 0;
+        result = 31 * result + (indexName != null ? indexName.hashCode() : 0);
+        return result;
     }
 }

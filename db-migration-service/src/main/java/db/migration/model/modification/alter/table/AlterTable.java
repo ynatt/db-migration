@@ -21,7 +21,7 @@ public class AlterTable implements DBChange {
     }
 
     public AlterTable(Table table, AbstractAlterType alterType) {
-        this.table = table;
+        this(table);
         this.alterType = alterType;
     }
 
@@ -47,5 +47,21 @@ public class AlterTable implements DBChange {
     @Override
     public String getChangeType() {
         return "ALTER TABLE";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AlterTable)) return false;
+        AlterTable that = (AlterTable) o;
+        return (table != null ? table.equals(that.table) : that.table == null)
+                && (alterType != null ? alterType.equals(that.alterType) : that.alterType == null);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = table != null ? table.hashCode() : 0;
+        result = 31 * result + (alterType != null ? alterType.hashCode() : 0);
+        return result;
     }
 }

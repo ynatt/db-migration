@@ -11,6 +11,7 @@ public class RenameTo extends AbstractAlterType {
     private Table newTable;
 
     public RenameTo() {
+
     }
 
     public RenameTo(AlterTableType alterTypeName) {
@@ -33,5 +34,21 @@ public class RenameTo extends AbstractAlterType {
     @Override
     public String toString() {
         return "RENAME TO " + newTable.getFullName();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RenameTo)) return false;
+        if (!super.equals(o)) return false;
+        RenameTo renameTo = (RenameTo) o;
+        return newTable != null ? newTable.equals(renameTo.newTable) : renameTo.newTable == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (newTable != null ? newTable.hashCode() : 0);
+        return result;
     }
 }

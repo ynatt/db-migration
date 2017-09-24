@@ -19,7 +19,7 @@ public class IndexedColumn {
     }
 
     public IndexedColumn(Column column, Order order) {
-        this.column = column;
+        this(column);
         this.order = order;
     }
 
@@ -45,6 +45,22 @@ public class IndexedColumn {
         if(order!=null){
             result+=order.toString();
         }
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof IndexedColumn)) return false;
+        IndexedColumn that = (IndexedColumn) o;
+        return (column != null ? column.equals(that.column) : that.column == null)
+                && order == that.order;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = column != null ? column.hashCode() : 0;
+        result = 31 * result + (order != null ? order.hashCode() : 0);
         return result;
     }
 }

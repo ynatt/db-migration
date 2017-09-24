@@ -11,7 +11,7 @@ import java.util.List;
 public class Index extends DBObject implements MultiName {
     private IndexName indexName;
     private String indexType;
-    private List<IndexedColumn> indexedColumns = new ArrayList<>();
+    private List<IndexedColumn> indexedColumns;
 
     public Index() {
 
@@ -19,22 +19,23 @@ public class Index extends DBObject implements MultiName {
 
     public Index(IndexName indexName) {
         this.indexName = indexName;
+        this.indexedColumns = new ArrayList<>();
     }
 
     public Index(IndexName indexName, String indexType) {
-        this.indexName = indexName;
+        this(indexName);
         this.indexType = indexType;
     }
 
     public Index(IndexName indexName, String indexType, List<IndexedColumn> indexedColumns) {
-        this.indexName = indexName;
-        this.indexType = indexType;
+        this(indexName,indexType);
         this.indexedColumns = indexedColumns;
     }
 
     public IndexName getIndexName() {
         return indexName;
     }
+
     @XmlElement
     public void setIndexName(IndexName indexName) {
         this.indexName = indexName;
@@ -56,8 +57,32 @@ public class Index extends DBObject implements MultiName {
         this.indexedColumns = indexedColumns;
     }
 
+    public void addIndexedColumn(IndexedColumn indexedColumn){
+        if(indexedColumns!=null) {
+            this.indexedColumns.add(indexedColumn);
+        }
+    }
+
     @Override
     public String getFullName() {
         return indexName.getFullName();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Index)) return false;
+        Index index = (Index) o;
+        return (indexName != null ? indexName.equals(index.indexName) : index.indexName == null)
+                && (indexType != null ? indexType.equals(index.indexType) : index.indexType == null)
+                && (indexedColumns != null ? indexedColumns.equals(index.indexedColumns) : index.indexedColumns == null);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = indexName != null ? indexName.hashCode() : 0;
+        result = 31 * result + (indexType != null ? indexType.hashCode() : 0);
+        result = 31 * result + (indexedColumns != null ? indexedColumns.hashCode() : 0);
+        return result;
     }
 }

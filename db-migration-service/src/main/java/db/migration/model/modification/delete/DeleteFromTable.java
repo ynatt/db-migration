@@ -45,4 +45,20 @@ public class DeleteFromTable implements DBChange {
     public String getChangeType() {
         return "DELETE FROM TABLE";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DeleteFromTable)) return false;
+        DeleteFromTable that = (DeleteFromTable) o;
+        return (table != null ? table.equals(that.table) : that.table == null)
+                && (whereExpression != null ? whereExpression.equals(that.whereExpression) : that.whereExpression == null);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = table != null ? table.hashCode() : 0;
+        result = 31 * result + (whereExpression != null ? whereExpression.hashCode() : 0);
+        return result;
+    }
 }

@@ -14,10 +14,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>ec.project</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>db-migration-service</artifactId>
-            <version>1.0</version>
-            <scope>compile</scope>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>

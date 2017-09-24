@@ -16,30 +16,25 @@ public class IndexedConstraint extends TableConstraint {
     private ConstraintType type;
 
     public IndexedConstraint() {
-
-    }
-
-    public IndexedConstraint(ConstraintType type){
-        this.type=type;
         indexedColumns = new ArrayList<>();
     }
 
-    public IndexedConstraint(ConstraintType type,List<Column> columns){
+    public IndexedConstraint(ConstraintType type){
+        this();
         if(checkType(type)) {
             this.type = type;
         } else {
-            generateException();
+            throw new IllegalArgumentException("type can be only ConstraintType.PRIMARY_KEY or ConstraintType.UNIQUE");
         }
+    }
+
+    public IndexedConstraint(ConstraintType type,List<Column> columns){
+        this(type);
         this.indexedColumns=columns;
     }
 
     public IndexedConstraint(ConstraintType type,List<Column> columns,ConflictDecision conflictDecision){
-        if(checkType(type)) {
-            this.type = type;
-        } else {
-            generateException();
-        }
-        this.indexedColumns=columns;
+        this(type,columns);
         this.conflictDecision=conflictDecision;
     }
 
@@ -48,29 +43,18 @@ public class IndexedConstraint extends TableConstraint {
         if(checkType(type)) {
             this.type = type;
         } else {
-            generateException();
+            throw new IllegalArgumentException("type can be only ConstraintType.PRIMARY_KEY or ConstraintType.UNIQUE");
         }
         indexedColumns = new ArrayList<>();
     }
 
     public IndexedConstraint(String name,ConstraintType type,List<Column> columns) {
-        super(name);
-        if(checkType(type)) {
-            this.type = type;
-        } else {
-            generateException();
-        }
+        this(name,type);
         this.indexedColumns=columns;
     }
 
     public IndexedConstraint(String name,ConstraintType type,List<Column> columns,ConflictDecision conflictDecision) {
-        super(name);
-        if(checkType(type)) {
-            this.type = type;
-        } else {
-            generateException();
-        }
-        this.indexedColumns=columns;
+        this(name,type,columns);
         this.conflictDecision=conflictDecision;
     }
     @XmlElement
@@ -102,9 +86,6 @@ public class IndexedConstraint extends TableConstraint {
         return ConstraintType.PRIMARY_KEY==type || ConstraintType.UNIQUE==type;
     }
 
-    private void generateException(){
-        throw new IllegalArgumentException("type can be only ConstraintType.PRIMARY_KEY or ConstraintType.UNIQUE");
-    }
     @Override
     public ConstraintType getType() {
         return type;
@@ -133,5 +114,25 @@ public class IndexedConstraint extends TableConstraint {
             result.append(conflictDecision.toString());
         }
         return result.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof IndexedConstraint)) return false;
+
+        IndexedConstraint that = (IndexedConstraint) o;
+
+        return (indexedColumns != null ? indexedColumns.equals(that.indexedColumns) : that.indexedColumns == null)
+                && conflictDecision == that.conflictDecision
+                && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = indexedColumns != null ? indexedColumns.hashCode() : 0;
+        result = 31 * result + (conflictDecision != null ? conflictDecision.hashCode() : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        return result;
     }
 }

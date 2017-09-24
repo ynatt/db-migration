@@ -27,12 +27,12 @@ public class SQLiteTrackingConnection implements TrackingConnection{
     private Connection connection;
     private DBChangeTracker tracker;
 
-    public SQLiteTrackingConnection(){
-
+    public SQLiteTrackingConnection(Connection connection){
+        this.connection = connection;
     }
 
     public SQLiteTrackingConnection(Connection connection, DBChangeTracker tracker) {
-        this.connection = connection;
+        this(connection);
         this.tracker = tracker;
     }
 

@@ -34,4 +34,17 @@ public abstract class TableConstraint {
             return "";
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TableConstraint)) return false;
+        TableConstraint that = (TableConstraint) o;
+        return name != null ? name.equals(that.name) : that.name == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return name != null ? name.hashCode() : 0;
+    }
 }

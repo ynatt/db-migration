@@ -28,4 +28,19 @@ public class OnUpdateClause {
     public String toString() {
         return "ON UPDATE "+ clauseDecision;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof OnUpdateClause)) return false;
+
+        OnUpdateClause that = (OnUpdateClause) o;
+
+        return clauseDecision == that.clauseDecision;
+    }
+
+    @Override
+    public int hashCode() {
+        return clauseDecision != null ? clauseDecision.hashCode() : 0;
+    }
 }

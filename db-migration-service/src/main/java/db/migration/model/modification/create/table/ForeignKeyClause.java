@@ -4,8 +4,7 @@ import db.migration.model.Column;
 import db.migration.model.Table;
 
 import javax.xml.bind.annotation.XmlElement;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class ForeignKeyClause {
     private Table foreignTable;
@@ -93,5 +92,58 @@ public class ForeignKeyClause {
             result.append(" NOT DEFERRABLE");
         }
         return result.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ForeignKeyClause)) return false;
+        ForeignKeyClause that = (ForeignKeyClause) o;
+        return (foreignTable != null ? foreignTable.equals(that.foreignTable) : that.foreignTable == null)
+                && (columns != null ? columnsEquals(columns,that.columns) : that.columns == null)
+                && (onDeleteClause != null ? onDeleteClause.equals(that.onDeleteClause) : that.onDeleteClause == null)
+                && (onUpdateClause != null ? onUpdateClause.equals(that.onUpdateClause) : that.onUpdateClause == null)
+                && (foreignKeyDeferrable != null ? foreignKeyDeferrable.equals(that.foreignKeyDeferrable) : that.foreignKeyDeferrable == null);
+    }
+
+    public boolean columnsEquals(List<Column> firstColumns,List<Column> secondColumns){
+        if(firstColumns==null | secondColumns==null){
+            return false;
+        }
+        Set<Column> sortedFirstColumns = new TreeSet<>(new Comparator<Column>() {
+            @Override
+            public int compare(Column o1, Column o2) {
+                return o1.getFullName().compareTo(o2.getFullName());
+            }
+        });
+        sortedFirstColumns.addAll(firstColumns);
+        Set<Column> sortedSecondColumns = new TreeSet<>(new Comparator<Column>() {
+            @Override
+            public int compare(Column o1, Column o2) {
+                return o1.getFullName().compareTo(o2.getFullName());
+            }
+        });
+        sortedSecondColumns.addAll(secondColumns);
+        if(sortedFirstColumns.size()!=sortedSecondColumns.size()){
+            return false;
+        }
+        Iterator<Column> firstIterator = sortedFirstColumns.iterator();
+        Iterator<Column> secondIterator = sortedSecondColumns.iterator();
+        while (firstIterator.hasNext() & secondIterator.hasNext()){
+            if(!firstIterator.next().equals(secondIterator.next())){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = foreignTable != null ? foreignTable.hashCode() : 0;
+        result = 31 * result + (columns != null ? columns.hashCode() : 0);
+        result = 31 * result + (onDeleteClause != null ? onDeleteClause.hashCode() : 0);
+        result = 31 * result + (onUpdateClause != null ? onUpdateClause.hashCode() : 0);
+        result = 31 * result + (foreignKeyDeferrable != null ? foreignKeyDeferrable.hashCode() : 0);
+        return result;
     }
 }

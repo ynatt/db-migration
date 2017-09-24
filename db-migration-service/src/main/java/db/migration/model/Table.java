@@ -17,8 +17,8 @@ public class Table extends DBObject implements MultiName {
     }
 
     public Table(String schemaName, String tableName) {
+        this(tableName);
         this.schemaName = schemaName;
-        this.tableName = tableName;
     }
 
     public String getTableName() {
@@ -50,5 +50,21 @@ public class Table extends DBObject implements MultiName {
             fullName+=tableName;
         }
         return fullName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Table)) return false;
+        Table table = (Table) o;
+        return (schemaName != null ? schemaName.equals(table.schemaName) : table.schemaName == null)
+                && (tableName != null ? tableName.equals(table.tableName) : table.tableName == null);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = schemaName != null ? schemaName.hashCode() : 0;
+        result = 31 * result + (tableName != null ? tableName.hashCode() : 0);
+        return result;
     }
 }

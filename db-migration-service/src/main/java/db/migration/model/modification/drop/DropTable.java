@@ -42,15 +42,20 @@ public class DropTable implements DBChange {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        boolean tablesAreEqual = false;
-        boolean ifExistsAreEqual = false;
-        if(obj instanceof DropTable) {
-            if (this.getTable() != null | ((DropTable) obj).getTable()!=null) {
-                 tablesAreEqual = this.getTable().equals(((DropTable) obj).getTable());
-            }
-            ifExistsAreEqual = this.ifExists==((DropTable) obj).ifExists;
-        }
-        return tablesAreEqual | ifExistsAreEqual;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DropTable)) return false;
+
+        DropTable dropTable = (DropTable) o;
+
+        return ifExists == dropTable.ifExists
+                && (table != null ? table.equals(dropTable.table) : dropTable.table == null);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = table != null ? table.hashCode() : 0;
+        result = 31 * result + (ifExists ? 1 : 0);
+        return result;
     }
 }

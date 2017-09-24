@@ -35,4 +35,20 @@ public class AddColumn extends AbstractAlterType {
     public String toString() {
         return "ADD COLUMN "+newColumnDefinition;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AddColumn)) return false;
+        if (!super.equals(o)) return false;
+        AddColumn addColumn = (AddColumn) o;
+        return newColumnDefinition != null ? newColumnDefinition.equals(addColumn.newColumnDefinition) : addColumn.newColumnDefinition == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (newColumnDefinition != null ? newColumnDefinition.hashCode() : 0);
+        return result;
+    }
 }

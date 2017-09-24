@@ -84,4 +84,20 @@ public class ForeignKeyConstraint extends TableConstraint {
         result.append(clause);
         return result.toString();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ForeignKeyConstraint)) return false;
+        ForeignKeyConstraint that = (ForeignKeyConstraint) o;
+        return (columns != null ? columns.equals(that.columns) : that.columns == null)
+                && (clause != null ? clause.equals(that.clause) : that.clause == null);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = columns != null ? columns.hashCode() : 0;
+        result = 31 * result + (clause != null ? clause.hashCode() : 0);
+        return result;
+    }
 }

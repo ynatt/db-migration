@@ -15,13 +15,20 @@ public class SQLiteQueryParserManager implements SQLQueryParser{
 
     private List<SQLParserException> exceptions = new ArrayList<>();
 
+    private CCSQLiteQueryParser ccsqLiteQueryParser;
+
+    private SQLQueryParser simpleParser;
+
+    public SQLiteQueryParserManager(){
+        simpleParser = new SimpleSQLiteQueryParser();
+    }
+
     @Override
     public DBChange parseSQLQuery(String sql) throws SQLParserException{
-        CCSQLiteQueryParser ccParser = new CCSQLiteQueryParser(new StringReader(sql));
-        SQLQueryParser simpleParser = new SimpleSQLiteQueryParser();
-        DBChange dbChange = null;
+        ccsqLiteQueryParser = new CCSQLiteQueryParser(new StringReader(sql));
+        DBChange dbChange;
         try {
-            dbChange = ccParser.analiseQuery();
+            dbChange = ccsqLiteQueryParser.analiseQuery();
             if(dbChange!=null){
                 return dbChange;
             }
